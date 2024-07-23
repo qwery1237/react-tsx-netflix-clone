@@ -9,7 +9,12 @@ import TvById from './routes/TvById.tsx';
 import Movie from './routes/Movie.tsx';
 import MovieById from './routes/MovieById.tsx';
 import { theme } from './theme.ts';
-import { createGlobalStyle, ThemeProvider } from 'styled-components';
+import {
+  createGlobalStyle,
+  StyleSheetManager,
+  ThemeProvider,
+} from 'styled-components';
+import emotionIsPropValid from '@emotion/is-prop-valid';
 import Search from './routes/Search.tsx';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 const router = createBrowserRouter([
@@ -34,7 +39,6 @@ const router = createBrowserRouter([
 ]);
 const client = new QueryClient();
 const GlobalStyles = createGlobalStyle`
-  @import url('https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@300;400&display=swap');
   * {
     margin: 0;
     padding: 0;
@@ -44,7 +48,6 @@ const GlobalStyles = createGlobalStyle`
   width: 100vw;
   height: 300vh;
   font-weight: 300;
-  font-family: 'Source Sans Pro', sans-serif;
   color:${(props) => props.theme.white.darker};
   line-height: 1.2;
   background-color: ${(props) => props.theme.black.veryDark};
@@ -69,7 +72,12 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
     <QueryClientProvider client={client}>
       <ThemeProvider theme={theme}>
         <GlobalStyles />
-        <RouterProvider router={router} />
+        <StyleSheetManager
+          shouldForwardProp={emotionIsPropValid}
+          enableVendorPrefixes={true}
+        >
+          <RouterProvider router={router} />
+        </StyleSheetManager>
       </ThemeProvider>
     </QueryClientProvider>
   </React.StrictMode>

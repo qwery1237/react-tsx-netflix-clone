@@ -117,13 +117,13 @@ const SlideBtn = styled(motion.button)<{ textAlign: string }>`
     }
   }
 `;
-const variants = {
-  enter: (direction: string) => {
+const slideVariants = {
+  hidden: (direction: string) => {
     return {
       x: direction === 'right' ? window.outerWidth : -window.outerWidth,
     };
   },
-  center: {
+  visible: {
     x: 0,
   },
   exit: (direction: string) => {
@@ -159,23 +159,8 @@ export default function Home() {
   const decreaseIndex = () => {
     if (leaving) return;
     toggleLeaving();
-    if (lastIndex < offset) {
-      if (firstIndex > lastIndex) {
-        setFirstIndex((prev) => prev - offset);
-        setLastIndex((prev) => maxIndex + (prev - offset));
-        return;
-      }
-      setFirstIndex((prev) => maxIndex + (prev - offset));
-      setLastIndex((prev) => maxIndex + (prev - offset));
-      return;
-    }
-    if (firstIndex < offset) {
-      setFirstIndex((prev) => maxIndex + (prev - offset));
-      setLastIndex((prev) => prev - offset);
-      return;
-    }
-    setFirstIndex((prev) => prev - offset);
-    setLastIndex((prev) => prev - offset);
+    setFirstIndex((prev) => (prev - offset + maxIndex) % maxIndex);
+    setLastIndex((prev) => (prev - offset + maxIndex) % maxIndex);
   };
   useEffect(() => {
     if (width > 1399) {
@@ -196,8 +181,9 @@ export default function Home() {
     }
   }, [width]);
   useEffect(() => {
-    setLastIndex(firstIndex + offset - 1);
-  }, [offset]);
+    if (!movies) return;
+    setLastIndex((firstIndex + offset - 1) % movies.length);
+  }, [offset, firstIndex, movies]);
 
   if (!movies) {
     return <></>;
@@ -212,7 +198,7 @@ export default function Home() {
           ...movies.slice(firstIndex, maxIndex),
           ...movies.slice(0, lastIndex + 1),
         ];
-  console.log(displayMovies);
+
   return (
     <Container>
       <Banner bgImg={makeImgPath(banner.backdrop_path)}>
@@ -241,11 +227,11 @@ export default function Home() {
         <SliderAnimationWrapper height={(width / offset / 4) * 3}>
           <AnimatePresence initial={false} onExitComplete={toggleLeaving}>
             <Slider
-              variants={variants}
-              key={firstIndex}
+              key={displayMovies[0].id}
               custom={slideDirection}
-              initial='enter'
-              animate='center'
+              variants={slideVariants}
+              initial='hidden'
+              animate='visible'
               exit='exit'
               transition={{ type: 'tween', duration: 0.5 }}
             >
@@ -259,8 +245,9 @@ export default function Home() {
                   )}
                 />
               )}
-              {displayMovies.map((movie) => (
+              {displayMovies.map((movie, i) => (
                 <Movie
+                  key={movie.id + i}
                   layoutId={movie.id + ''}
                   width={width / offset}
                   bgImg={makeImgPath(movie.backdrop_path)}

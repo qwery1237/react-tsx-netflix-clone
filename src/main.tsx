@@ -72,12 +72,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
     <QueryClientProvider client={client}>
       <ThemeProvider theme={theme}>
         <GlobalStyles />
-        <StyleSheetManager
-          shouldForwardProp={emotionIsPropValid}
-          enableVendorPrefixes={true}
-        >
-          <RouterProvider router={router} />
-        </StyleSheetManager>
+        <RouterProvider router={router} />
       </ThemeProvider>
     </QueryClientProvider>
   </React.StrictMode>

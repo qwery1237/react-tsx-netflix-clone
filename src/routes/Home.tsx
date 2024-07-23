@@ -248,7 +248,6 @@ export default function Home() {
               {displayMovies.map((movie, i) => (
                 <Movie
                   key={movie.id + i}
-                  layoutId={movie.id + ''}
                   width={width / offset}
                   bgImg={makeImgPath(movie.backdrop_path)}
                 ></Movie>

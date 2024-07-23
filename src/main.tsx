@@ -9,12 +9,7 @@ import TvById from './routes/TvById.tsx';
 import Movie from './routes/Movie.tsx';
 import MovieById from './routes/MovieById.tsx';
 import { theme } from './theme.ts';
-import {
-  createGlobalStyle,
-  StyleSheetManager,
-  ThemeProvider,
-} from 'styled-components';
-import emotionIsPropValid from '@emotion/is-prop-valid';
+import { createGlobalStyle, ThemeProvider } from 'styled-components';
 import Search from './routes/Search.tsx';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 const router = createBrowserRouter([

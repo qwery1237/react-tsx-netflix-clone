@@ -46,6 +46,8 @@ const Item = styled.li<{ urlMatch?: boolean }>`
   }
 `;
 const Search = styled.form`
+  position: absolute;
+  right: 4%;
   svg {
     width: 24px;
     height: 24px;
@@ -53,9 +55,11 @@ const Search = styled.form`
   }
 `;
 const SearchBar = styled(motion.div)`
+  background-color: rgba(20, 20, 20, 1);
   border: solid 1px white;
   display: flex;
   width: 250px;
+  max-width: 92vw;
   height: 30px;
   align-items: center;
   padding: 0 4px;

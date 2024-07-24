@@ -27,3 +27,13 @@ export const getMovies = async () => {
 
   return movies;
 };
+export const getMovieDetail = async (movieId: number) => {
+  const { data } = await axios.get(`
+https://api.themoviedb.org/3/movie/${movieId}`);
+  console.log(data);
+};
+
+export const getBannerMovie = async () => {
+  const movies = await getMovies();
+  return movies[0];
+};

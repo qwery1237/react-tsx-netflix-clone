@@ -27,10 +27,14 @@ export const getMovies = async () => {
 
   return movies;
 };
-export const getMovieDetail = async (movieId: number) => {
+export const getMovieGenres = async (movieId?: number) => {
+  if (!movieId) return;
   const { data } = await axios.get(`
-https://api.themoviedb.org/3/movie/${movieId}`);
-  console.log(data);
+https://api.themoviedb.org/3/movie/${movieId}?api_key=${API_KEY}`);
+  const genresCopy = [...data.genres].map((genre) => genre.name);
+  const genres = genresCopy.length <= 3 ? genresCopy : genresCopy.slice(0, 3);
+
+  return genres;
 };
 
 export const getBannerMovie = async () => {

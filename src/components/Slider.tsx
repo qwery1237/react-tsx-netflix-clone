@@ -6,7 +6,7 @@ import { useQuery } from '@tanstack/react-query';
 import { getMovies } from '../api';
 import { getOffset, makeImgPath } from '../utils';
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa6';
-import Movie, { IMovieProps } from './Movie';
+import Movie, { IMovieCssProps } from './Movie';
 
 const SliderWrapper = styled.div`
   width: 100%;
@@ -23,6 +23,7 @@ const SliderAnimationWrapper = styled.div<{ height: number }>`
   margin-top: 1.2vw;
   width: 100%;
   position: relative;
+
   height: ${(props) => props.height + 'px'};
 `;
 const Row = styled(motion.div)`
@@ -30,10 +31,9 @@ const Row = styled(motion.div)`
   position: absolute;
   width: 100%;
   padding: ${(props) => props.theme.paddingContainer};
-  overflow: hidden;
   gap: 0.5vw;
 `;
-const PrevMovie = styled(motion.div)<IMovieProps>`
+const PrevMovie = styled(motion.div)<IMovieCssProps>`
   width: ${(props) => props.width + 'px'};
   height: ${(props) => (props.width / 11) * 6 + 'px'};
   border-radius: 0.2rem;
@@ -173,6 +173,8 @@ export default function Slider() {
                 width={width / offset}
                 bgImg={makeImgPath(movie.backdrop_path)}
                 movie={movie}
+                offset={offset}
+                index={i}
               />
             ))}
             <NextMovie

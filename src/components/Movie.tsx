@@ -1,28 +1,129 @@
 import { motion } from 'framer-motion';
 import styled from 'styled-components';
 import { IMovie } from '../api';
-import { useQuery } from '@tanstack/react-query';
-export interface IMovieProps {
+
+import { MdKeyboardArrowDown } from 'react-icons/md';
+import { useNavigate } from 'react-router-dom';
+
+interface IMovieProps {
   bgImg: string;
   width: number;
-  movie?: IMovie;
+  offset: number;
+  movie: IMovie;
+  index: number;
 }
-const Container = styled(motion.div)<{ width: number }>`
+export interface IMovieCssProps {
+  width: number;
+  bgImg: string;
+}
+interface IContainerProps {
+  width: number;
+  offset: number;
+  index: number;
+}
+const Container = styled(motion.div)<IContainerProps>`
   border-radius: 0.2rem;
   overflow: hidden;
   width: ${(props) => props.width + 'px'};
+
+  ${(props) => {
+    switch (props.index) {
+      case 0:
+        return 'transform-origin: center left;';
+      case props.offset - 1:
+        return 'transform-origin: center right;';
+    }
+  }}
+  height:fit-content;
 `;
-const MovieImg = styled.div<IMovieProps>`
+const MovieImg = styled.div<IMovieCssProps>`
   width: 100%;
   height: ${(props) => (props.width / 11) * 6 + 'px'};
   background-size: cover;
   background-position: center;
   background-image: url(${(props) => props.bgImg});
 `;
-export default function Movie({ width, bgImg, movie }: IMovieProps) {
+const Info = styled(motion.div)`
+  width: 100%;
+  padding: 1rem;
+  opacity: 0;
+  background-color: ${(props) => props.theme.black.darker};
+`;
+const BtnWrapper = styled.div`
+  width: 100%;
+  display: flex;
+  justify-content: end;
+  margin-bottom: 1rem;
+`;
+const Btn = styled.button`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2vw;
+  padding: 2px;
+  border-radius: 50%;
+  border: solid 1.5px rgba(255, 255, 255, 0.5);
+  &:hover {
+    cursor: pointer;
+    border-color: ${(props) => props.theme.white.darker};
+  }
+`;
+const Title = styled.span``;
+const Rating = styled.div`
+  color: #46d369;
+  margin: 0.3vw 0;
+`;
+
+const containerVariants = {
+  initial: { scale: 1, y: 0 },
+  hover: {
+    scale: 1.2,
+    y: -60,
+    boxShadow: '0px 10px 30px rgba(0, 0, 0, 0.5)',
+    transition: { delay: 0.5 },
+  },
+};
+const infoVariants = {
+  hover: {
+    opacity: 1,
+    transition: { delay: 0.5 },
+  },
+};
+export default function Movie({
+  width,
+  bgImg,
+  movie,
+  offset,
+  index,
+}: IMovieProps) {
+  const navigate = useNavigate();
+  const onClick = () => {
+    navigate(String(movie.id));
+  };
+
   return (
-    <Container width={width}>
+    <Container
+      offset={offset}
+      variants={containerVariants}
+      whileHover='hover'
+      initial='initial'
+      transition={{ type: 'tween', duration: 0.2 }}
+      width={width}
+      index={index}
+    >
       <MovieImg width={width} bgImg={bgImg} />
+      <Info
+        variants={infoVariants}
+        transition={{ type: 'tween', duration: 0.2 }}
+      >
+        <BtnWrapper>
+          <Btn onClick={onClick}>
+            <MdKeyboardArrowDown />
+          </Btn>
+        </BtnWrapper>
+        <Rating>{movie.vote_average.toFixed(1)}/10</Rating>
+        <Title>{movie.title}</Title>
+      </Info>
     </Container>
   );
 }

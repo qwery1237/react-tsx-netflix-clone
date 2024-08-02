@@ -10,13 +10,19 @@ const Wrapper = styled(motion.div)`
   background-color: rgba(0, 0, 0, 0.5);
   z-index: 3;
 `;
+const MovieDetail = styled(motion.div)``;
+const MovieImg = styled(motion.div)``;
 export default function Preview() {
   const { contentId } = useParams();
   console.log(contentId);
 
   return (
     <AnimatePresence>
-      <Wrapper>sth</Wrapper>
+      <Wrapper>
+        <MovieDetail>
+          <MovieImg></MovieImg>
+        </MovieDetail>
+      </Wrapper>
     </AnimatePresence>
   );
 }

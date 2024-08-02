@@ -22,8 +22,6 @@ interface IContainerProps {
   index: number;
 }
 const Container = styled(motion.div)<IContainerProps>`
-  border-radius: 0.2rem;
-  overflow: hidden;
   width: ${(props) => props.width + 'px'};
 
   ${(props) => {
@@ -36,8 +34,9 @@ const Container = styled(motion.div)<IContainerProps>`
   }}
   height:fit-content;
 `;
-const MovieImg = styled.div<IMovieCssProps>`
+const MovieImg = styled(motion.div)<IMovieCssProps>`
   width: 100%;
+  border-radius: 3px;
   height: ${(props) => (props.width / 11) * 6 + 'px'};
   background-size: cover;
   background-position: center;
@@ -47,6 +46,7 @@ const Info = styled(motion.div)`
   width: 100%;
   padding: 1rem;
   opacity: 0;
+  border-radius: 3px;
   background-color: ${(props) => props.theme.black.darker};
 `;
 const BtnWrapper = styled.div`
@@ -75,17 +75,23 @@ const Rating = styled.div`
 `;
 
 const containerVariants = {
-  initial: { scale: 1, y: 0 },
   hover: {
     scale: 1.2,
     y: -60,
-    boxShadow: '0px 10px 30px rgba(0, 0, 0, 0.5)',
+    boxShadow: 'rgba(0, 0, 0, 0.75) 0px 3px 10px',
+    transition: { delay: 0.5 },
+  },
+};
+const imgVariants = {
+  hover: {
+    borderRadius: '6px 6px 0 0',
     transition: { delay: 0.5 },
   },
 };
 const infoVariants = {
   hover: {
     opacity: 1,
+    borderRadius: '0 0 6px 6px',
     transition: { delay: 0.5 },
   },
 };
@@ -106,12 +112,17 @@ export default function Movie({
       offset={offset}
       variants={containerVariants}
       whileHover='hover'
-      initial='initial'
       transition={{ type: 'tween', duration: 0.2 }}
       width={width}
       index={index}
     >
-      <MovieImg width={width} bgImg={bgImg} />
+      <MovieImg
+        width={width}
+        bgImg={bgImg}
+        variants={imgVariants}
+        transition={{ type: 'tween', duration: 0.2 }}
+        layoutId={movie.id + '_img'}
+      />
       <Info
         variants={infoVariants}
         transition={{ type: 'tween', duration: 0.2 }}

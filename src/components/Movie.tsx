@@ -1,9 +1,9 @@
 import { motion } from 'framer-motion';
 import styled from 'styled-components';
 import { IMovie } from '../api';
-
 import { MdKeyboardArrowDown } from 'react-icons/md';
 import { useNavigate } from 'react-router-dom';
+import { useRef } from 'react';
 
 interface IMovieProps {
   bgImg: string;
@@ -15,6 +15,7 @@ interface IMovieProps {
 export interface IMovieCssProps {
   width: number;
   bgImg: string;
+  leaving?: boolean;
 }
 interface IContainerProps {
   width: number;
@@ -23,7 +24,7 @@ interface IContainerProps {
 }
 const Container = styled(motion.div)<IContainerProps>`
   width: ${(props) => props.width + 'px'};
-
+  border-radius: 3px;
   ${(props) => {
     switch (props.index) {
       case 0:
@@ -46,6 +47,7 @@ const Info = styled(motion.div)`
   width: 100%;
   padding: 1rem;
   opacity: 0;
+  display: none;
   border-radius: 3px;
   background-color: ${(props) => props.theme.black.darker};
 `;
@@ -63,9 +65,13 @@ const Btn = styled.button`
   padding: 2px;
   border-radius: 50%;
   border: solid 1.5px rgba(255, 255, 255, 0.5);
+
   &:hover {
     cursor: pointer;
     border-color: ${(props) => props.theme.white.darker};
+  }
+  @media (max-width: 800px) {
+    font-size: 3vw;
   }
 `;
 const Title = styled.span``;
@@ -76,9 +82,11 @@ const Rating = styled.div`
 
 const containerVariants = {
   hover: {
+    borderRadius: '6px',
     scale: 1.2,
     y: -60,
     boxShadow: 'rgba(0, 0, 0, 0.75) 0px 3px 10px',
+    minWidth: '150px',
     transition: { delay: 0.5 },
   },
 };
@@ -90,6 +98,7 @@ const imgVariants = {
 };
 const infoVariants = {
   hover: {
+    display: 'block',
     opacity: 1,
     borderRadius: '0 0 6px 6px',
     transition: { delay: 0.5 },
@@ -103,12 +112,15 @@ export default function Movie({
   index,
 }: IMovieProps) {
   const navigate = useNavigate();
-  const onClick = () => {
+  const movieRef = useRef<HTMLDivElement>(null);
+
+  const onClick = async () => {
     navigate(String(movie.id));
   };
 
   return (
     <Container
+      ref={movieRef}
       offset={offset}
       variants={containerVariants}
       whileHover='hover'
@@ -121,7 +133,6 @@ export default function Movie({
         bgImg={bgImg}
         variants={imgVariants}
         transition={{ type: 'tween', duration: 0.2 }}
-        layoutId={movie.id + '_img'}
       />
       <Info
         variants={infoVariants}

@@ -1,14 +1,11 @@
-import {
-  motion,
-  useAnimation,
-  useMotionValueEvent,
-  useScroll,
-} from 'framer-motion';
+import { motion, useAnimation } from 'framer-motion';
 import { Link, useMatch } from 'react-router-dom';
 import styled from 'styled-components';
 import LogoSVG from './LogoSVG';
 import { FiSearch } from 'react-icons/fi';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useRecoilValue } from 'recoil';
+import { currentYState } from '../atom';
 
 const Nav = styled(motion.nav)`
   width: 100%;
@@ -79,15 +76,15 @@ const navVariant = {
 };
 export default function Header() {
   const [searchActive, setSearchActive] = useState(false);
-  const { scrollY } = useScroll();
+  const currentY = useRecoilValue(currentYState);
   const navAnimation = useAnimation();
-  useMotionValueEvent(scrollY, 'change', (y) => {
-    if (y > 0) {
+  useEffect(() => {
+    if (currentY > 0) {
       navAnimation.start('scroll');
     } else {
       navAnimation.start('top');
     }
-  });
+  }, [currentY]);
 
   const baseUrl = '/react-tsx-netflix-clone/';
   const homeMatch = useMatch(baseUrl) !== null;

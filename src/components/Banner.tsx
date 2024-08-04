@@ -9,7 +9,12 @@ const BannerWrapper = styled.div<{ bgImg: string }>`
   width: 100vw;
   height: 56.25vw;
   padding: ${(props) => props.theme.paddingContainer};
-  background-image: linear-gradient(rgba(20, 20, 20, 0), rgba(20, 20, 20, 1)),
+  background-image: linear-gradient(
+      to bottom,
+      rgba(20, 20, 20, 0),
+      rgba(20, 20, 20, 0) 70%,
+      rgba(20, 20, 20, 1) 100%
+    ),
     url(${(props) => props.bgImg});
   background-size: cover;
   background-position: 50%;
@@ -20,7 +25,7 @@ const BannerWrapper = styled.div<{ bgImg: string }>`
 const TitleWrapper = styled(motion.div)`
   transform-origin: bottom left;
 `;
-const TitleLogo = styled(motion.div)`
+const TitleLogo = styled.div`
   font-size: 2vw;
   letter-spacing: 0.5vw;
   font-weight: 500;

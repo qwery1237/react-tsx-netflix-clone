@@ -12,6 +12,7 @@ import { theme } from './theme.ts';
 import { createGlobalStyle, ThemeProvider } from 'styled-components';
 import Search from './routes/Search.tsx';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { RecoilRoot } from 'recoil';
 const router = createBrowserRouter([
   {
     path: '/react-tsx-netflix-clone/',
@@ -69,10 +70,12 @@ const GlobalStyles = createGlobalStyle`
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <QueryClientProvider client={client}>
-      <ThemeProvider theme={theme}>
-        <GlobalStyles />
-        <RouterProvider router={router} />
-      </ThemeProvider>
+      <RecoilRoot>
+        <ThemeProvider theme={theme}>
+          <GlobalStyles />
+          <RouterProvider router={router} />
+        </ThemeProvider>
+      </RecoilRoot>
     </QueryClientProvider>
   </React.StrictMode>
 );

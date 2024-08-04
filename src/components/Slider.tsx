@@ -36,7 +36,7 @@ const Row = styled(motion.div)`
 const PrevMovie = styled(motion.div)<IMovieCssProps>`
   width: ${(props) => props.width + 'px'};
   height: ${(props) => (props.width / 11) * 6 + 'px'};
-  border-radius: 0.2rem;
+  border-radius: 3px;
   background-size: cover;
   background-position: center;
   background-image: url(${(props) => props.bgImg});
@@ -48,10 +48,10 @@ const NextMovie = styled(PrevMovie)`
   position: absolute;
   left: 96.5vw;
   background-image: url(${(props) => props.bgImg});
+  background-color: red;
 `;
 const SlideBtn = styled(motion.button)<{ textAlign: string }>`
   position: relative;
-  z-index: 2;
   width: 3.5vw;
   height: 100%;
   ${(props) =>
@@ -78,7 +78,10 @@ const SlideBtn = styled(motion.button)<{ textAlign: string }>`
 const slideVariants = {
   hidden: (direction: string) => {
     return {
-      x: direction === 'right' ? window.outerWidth : -window.outerWidth,
+      x:
+        direction === 'right'
+          ? window.outerWidth * 0.94
+          : -window.outerWidth * 0.94,
     };
   },
   visible: {
@@ -86,7 +89,10 @@ const slideVariants = {
   },
   exit: (direction: string) => {
     return {
-      x: direction === 'right' ? -window.outerWidth : window.outerWidth,
+      x:
+        direction === 'right'
+          ? -window.outerWidth * 0.94
+          : window.outerWidth * 0.94,
     };
   },
 };
@@ -161,6 +167,7 @@ export default function Slider() {
             {showPrev && (
               <PrevMovie
                 width={width / offset}
+                leaving={leaving}
                 bgImg={makeImgPath(
                   movies[firstIndex === 0 ? movies.length - 1 : firstIndex - 1]
                     .backdrop_path
@@ -179,6 +186,7 @@ export default function Slider() {
             ))}
             <NextMovie
               width={width / offset}
+              leaving={leaving}
               bgImg={makeImgPath(
                 movies[
                   firstIndex + offset >= movies.length ? 0 : firstIndex + offset

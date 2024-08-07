@@ -9,6 +9,8 @@ import { getMovieDetail } from '../api';
 import { makeImgPath } from '../utils';
 import { IoCloseOutline } from 'react-icons/io5';
 import { SiNetflix } from 'react-icons/si';
+import Detail from './Detail';
+import MoreLikeThis from './MoreLikeThis';
 const Wrapper = styled(motion.div)<{ top: number }>`
   position: absolute;
   top: ${(props) => props.top + 'px'};
@@ -18,7 +20,7 @@ const Wrapper = styled(motion.div)<{ top: number }>`
   display: flex;
   justify-content: center;
   padding-top: 32px;
-  background-color: rgba(0, 0, 0, 0.4);
+  background-color: rgba(0, 0, 0, 0.5);
   z-index: 2;
   overflow-y: auto;
   &::-webkit-scrollbar {
@@ -29,7 +31,7 @@ const Wrapper = styled(motion.div)<{ top: number }>`
     padding: 0;
   }
 `;
-const MovieDetail = styled(motion.div)`
+const PreviewModal = styled(motion.div)`
   width: 850px;
   height: fit-content;
   max-width: 96%;
@@ -84,6 +86,7 @@ const TitleLogo = styled.div`
   display: flex;
   align-items: center;
   color: #c2c3c2;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
   svg {
     width: 1.5em;
     height: 1.5em;
@@ -96,25 +99,11 @@ const TitleLogo = styled.div`
 const Title = styled.h1`
   font-size: 36px;
   font-weight: 500;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
   @media (max-width: 860px) {
     font-size: 4vw;
   }
 `;
-const Detail = styled.div`
-  width: 100%;
-  height: fit-content;
-  padding: ${(props) => props.theme.paddingContainer};
-`;
-const Rating = styled.div`
-  color: #46d369;
-  margin: 0.3vw 0;
-`;
-const ReleasedAt = styled.div`
-  color: #bcbcbc;
-`;
-const Runtime = styled.div``;
-const Overview = styled.div``;
-const Genre = styled.div``;
 export default function Preview() {
   const navigate = useNavigate();
   const currentY = useRecoilValue(currentYState);
@@ -128,6 +117,7 @@ export default function Preview() {
     if (event.currentTarget !== event.target) return;
     setShowModal(false);
   };
+
   useEffect(() => {
     document.body.style.overflow = 'hidden';
     document.documentElement.style.overflow = 'hidden';
@@ -140,7 +130,6 @@ export default function Preview() {
     navigate(-1);
     return <></>;
   }
-  console.log(detail);
 
   return (
     <AnimatePresence onExitComplete={() => navigate('../')}>
@@ -153,7 +142,7 @@ export default function Preview() {
           top={currentY}
           onClick={hideContent}
         >
-          <MovieDetail
+          <PreviewModal
             initial={{ scale: 0, transformOrigin: 'center top' }}
             animate={{ scale: 1 }}
             exit={{ scale: 0 }}
@@ -175,16 +164,9 @@ export default function Preview() {
                 <Title>{detail.title.toUpperCase()}</Title>
               </TitleWrapper>
             </MovieImg>
-            <Detail>
-              <Rating>{detail.vote_average.toFixed(1)}/10</Rating>
-              <ReleasedAt>{detail.release_date.slice(0, 4)}</ReleasedAt>
-              <Runtime>{detail.runtime} m</Runtime>
-              <Overview>{detail.overview}</Overview>
-              <Genre>
-                <span>Genres</span>
-              </Genre>
-            </Detail>
-          </MovieDetail>
+            <Detail detail={detail} />
+            <MoreLikeThis />
+          </PreviewModal>
         </Wrapper>
       )}
     </AnimatePresence>

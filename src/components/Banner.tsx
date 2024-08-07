@@ -32,6 +32,7 @@ const TitleLogo = styled.div`
   display: flex;
   align-items: center;
   color: #c2c3c2;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
   svg {
     width: 1.5em;
     height: 1.5em;
@@ -41,6 +42,7 @@ const TitleLogo = styled.div`
 const Title = styled.h1`
   font-size: 6vw;
   font-weight: 500;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
 `;
 const Overview = styled(motion.p)`
   font-size: 1.2vw;

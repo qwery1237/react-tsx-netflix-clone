@@ -70,3 +70,13 @@ export const getBannerMovie = async () => {
   const movies = await getMovies();
   return movies[0];
 };
+
+export const getSimilarMovies = async (movieId?: string) => {
+  if (!movieId) return;
+  const { data } = await axios.get(`
+    https://api.themoviedb.org/3/movie/${movieId}/similar?api_key=${API_KEY}`);
+  const similars: IMovie[] = data.results;
+  console.log(similars);
+
+  return similars;
+};

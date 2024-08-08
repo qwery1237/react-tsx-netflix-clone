@@ -5,6 +5,7 @@ import Preview from '../components/Preview';
 
 export default function Home() {
   const showPreview = useMatch('/react-tsx-netflix-clone/:contentId') !== null;
+
   return (
     <>
       <Banner />

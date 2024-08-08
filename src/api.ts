@@ -76,7 +76,6 @@ export const getSimilarMovies = async (movieId?: string) => {
   const { data } = await axios.get(`
     https://api.themoviedb.org/3/movie/${movieId}/similar?api_key=${API_KEY}`);
   const similars: IMovie[] = data.results;
-  console.log(similars);
 
   return similars;
 };

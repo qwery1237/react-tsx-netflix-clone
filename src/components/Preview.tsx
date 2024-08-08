@@ -11,6 +11,7 @@ import { IoCloseOutline } from 'react-icons/io5';
 import { SiNetflix } from 'react-icons/si';
 import Detail from './Detail';
 import MoreLikeThis from './MoreLikeThis';
+import AboutThis from './AboutThis';
 const Wrapper = styled(motion.div)<{ top: number }>`
   position: absolute;
   top: ${(props) => props.top + 'px'};
@@ -126,14 +127,10 @@ export default function Preview() {
       document.documentElement.style.overflow = 'visible';
     };
   }, []);
-  if (!detail) {
-    navigate(-1);
-    return <></>;
-  }
 
   return (
     <AnimatePresence onExitComplete={() => navigate('../')}>
-      {showModal && (
+      {showModal && detail && (
         <Wrapper
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -166,6 +163,7 @@ export default function Preview() {
             </MovieImg>
             <Detail detail={detail} />
             <MoreLikeThis />
+            <AboutThis detail={detail} />
           </PreviewModal>
         </Wrapper>
       )}

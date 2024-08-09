@@ -7,7 +7,11 @@ import { useQuery } from '@tanstack/react-query';
 import { useRecoilState } from 'recoil';
 import { bannerMovieState } from '../atom';
 import { useEffect } from 'react';
+import styled from 'styled-components';
 
+const ListWrapper = styled.div`
+  margin-bottom: -4vw;
+`;
 export default function Home() {
   const showPreview = useMatch('/react-tsx-netflix-clone/:contentId') !== null;
   const { data: videoLists } = useQuery({
@@ -25,14 +29,16 @@ export default function Home() {
       {videoLists && bannerMovie.id && (
         <>
           <Banner />
-          {videoLists.map((list) => (
-            <Slider
-              key={list.label}
-              videos={list.results}
-              label={list.label}
-              genre={list.genre}
-            />
-          ))}
+          <ListWrapper>
+            {videoLists.map((list) => (
+              <Slider
+                key={list.label}
+                videos={list.results}
+                label={list.label}
+                genre={list.genre}
+              />
+            ))}
+          </ListWrapper>
           {showPreview && <Preview />}
         </>
       )}

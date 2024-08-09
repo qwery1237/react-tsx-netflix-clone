@@ -2,8 +2,8 @@ import { motion } from 'framer-motion';
 import { SiNetflix } from 'react-icons/si';
 import styled from 'styled-components';
 import { makeImgPath } from '../utils';
-import { useQuery } from '@tanstack/react-query';
-import { getBannerMovie } from '../api';
+import { useRecoilValue } from 'recoil';
+import { bannerMovieState } from '../atom';
 
 const BannerWrapper = styled.div<{ bgImg: string }>`
   width: 100vw;
@@ -59,10 +59,7 @@ const overviewVariants = {
   animate: { opacity: 0, y: '25px', transition: { delay: 4, duration: 0.3 } },
 };
 export default function Banner() {
-  const { data: banner } = useQuery({
-    queryKey: ['banner'],
-    queryFn: getBannerMovie,
-  });
+  const banner = useRecoilValue(bannerMovieState);
 
   if (!banner) {
     return <></>;

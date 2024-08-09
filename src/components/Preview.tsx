@@ -1,11 +1,11 @@
 import { AnimatePresence, motion } from 'framer-motion';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 import { currentYState } from '../atom';
 import { useEffect, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { getMovieDetail } from '../api';
+import { getMovieDetail, IMovieDetail, ITvShowDetail } from '../api';
 import { makeImgPath } from '../utils';
 import { IoCloseOutline } from 'react-icons/io5';
 import { SiNetflix } from 'react-icons/si';
@@ -22,7 +22,7 @@ const Wrapper = styled(motion.div)<{ top: number }>`
   justify-content: center;
   padding-top: 32px;
   background-color: rgba(0, 0, 0, 0.5);
-  z-index: 2;
+  z-index: 4;
   overflow-y: auto;
   &::-webkit-scrollbar {
     width: 0;
@@ -108,10 +108,12 @@ const Title = styled.h1`
 export default function Preview() {
   const navigate = useNavigate();
   const currentY = useRecoilValue(currentYState);
-  const { contentId } = useParams();
+  const { videoId } = useParams();
+  const { genre } = useLocation().state;
+
   const { data: detail } = useQuery({
-    queryKey: ['movieDetail', contentId],
-    queryFn: () => getMovieDetail(contentId),
+    queryKey: ['videoDetail', videoId],
+    queryFn: () => getMovieDetail(videoId, genre),
   });
   const [showModal, setShowModal] = useState(true);
   const hideContent = (event: React.MouseEvent<HTMLDivElement>) => {
@@ -158,7 +160,11 @@ export default function Preview() {
                   <SiNetflix />
                   SERIES
                 </TitleLogo>
-                <Title>{detail.title.toUpperCase()}</Title>
+                <Title>
+                  {genre === 'movie'
+                    ? (detail as IMovieDetail).title.toUpperCase()
+                    : (detail as ITvShowDetail).name.toUpperCase()}
+                </Title>
               </TitleWrapper>
             </MovieImg>
             <Detail detail={detail} />

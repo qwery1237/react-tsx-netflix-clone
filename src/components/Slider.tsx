@@ -2,16 +2,21 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import useScreenSize from '../hooks/useScreenSize';
-import { useQuery } from '@tanstack/react-query';
-import { getMovies } from '../api';
 import { getOffset, makeImgPath } from '../utils';
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa6';
-import Movie, { IMovieCssProps } from './Movie';
-
+import Video, { IMovieCssProps } from './Video';
+import { IMovie, ITVShow } from '../api';
+interface ISliderProps {
+  videos: IMovie[] | ITVShow[];
+  label: string;
+  genre: string;
+}
 const SliderWrapper = styled.div`
   width: 100%;
+  margin-bottom: 3vw;
   position: relative;
-  top: -15vw;
+  z-index: 1;
+  top: -14vw;
 `;
 const SliderTitle = styled.div`
   margin-bottom: 2vw;
@@ -34,8 +39,11 @@ const Row = styled(motion.div)`
   gap: 0.5vw;
 `;
 const PrevMovie = styled(motion.div)<IMovieCssProps>`
-  width: ${(props) => props.width + 'px'};
-  height: ${(props) => (props.width / 11) * 6 + 'px'};
+  width: ${(props) => {
+    console.log(props.width, 'prev');
+    return props.width + 'px';
+  }};
+  aspect-ratio: 11/6;
   border-radius: 3px;
   background-size: cover;
   background-position: center;
@@ -45,15 +53,13 @@ const PrevMovie = styled(motion.div)<IMovieCssProps>`
   background-image: url(${(props) => props.bgImg});
 `;
 const NextMovie = styled(PrevMovie)`
-  position: absolute;
   left: 96.5vw;
   background-image: url(${(props) => props.bgImg});
-  background-color: red;
 `;
 const SlideBtn = styled(motion.button)<{ textAlign: string }>`
   position: relative;
   width: 3.5vw;
-  height: 100%;
+  height: 101%;
   ${(props) =>
     props.textAlign === 'left'
       ? 'right:0;  border-top-left-radius:0.2rem ; border-bottom-left-radius: 0.2rem;'
@@ -97,11 +103,7 @@ const slideVariants = {
   },
 };
 
-export default function Slider() {
-  const { data: movies } = useQuery({
-    queryKey: ['movies', 'nowPlaying'],
-    queryFn: getMovies,
-  });
+export default function Slider({ videos, label }: ISliderProps) {
   const { width } = useScreenSize();
   const [offset, setOffset] = useState(0);
   const [showPrev, setShowPrev] = useState(false);
@@ -111,7 +113,13 @@ export default function Slider() {
   const [slideDirection, setSlideDirection] = useState('right');
   const [leaving, setLeaving] = useState(false);
 
-  const toggleBtn = () => setShowBtn((prev) => !prev);
+  const toggleBtn = (event: React.MouseEvent<HTMLDivElement>) => {
+    event.currentTarget.style.zIndex === '2'
+      ? (event.currentTarget.style.zIndex = '1')
+      : (event.currentTarget.style.zIndex = '2');
+
+    setShowBtn((prev) => !prev);
+  };
   const toggleLeaving = () => setLeaving((prev) => !prev);
   const increaseIndex = () => {
     !showPrev && setShowPrev(true);
@@ -132,31 +140,31 @@ export default function Slider() {
     offset !== newOffset && setOffset(newOffset);
   }, [width]);
   useEffect(() => {
-    if (!movies) return;
-    setLastIndex((firstIndex + offset - 1) % movies.length);
-  }, [offset, firstIndex, movies]);
+    if (!videos) return;
+    setLastIndex((firstIndex + offset - 1) % videos.length);
+  }, [offset, firstIndex, videos]);
 
-  if (!movies) {
+  if (!videos) {
     return <></>;
   }
 
-  const maxIndex = movies.length;
-  const displayMovies =
+  const maxIndex = videos.length;
+  const displayVideos =
     firstIndex < lastIndex
-      ? movies.slice(firstIndex, firstIndex + offset)
+      ? videos.slice(firstIndex, firstIndex + offset)
       : [
-          ...movies.slice(firstIndex, maxIndex),
-          ...movies.slice(0, lastIndex + 1),
+          ...videos.slice(firstIndex, maxIndex),
+          ...videos.slice(0, lastIndex + 1),
         ];
 
   return (
     <SliderWrapper onMouseEnter={toggleBtn} onMouseLeave={toggleBtn}>
-      <SliderTitle>Now Playing</SliderTitle>
+      <SliderTitle>{label}</SliderTitle>
 
       <SliderAnimationWrapper height={(width / offset / 11) * 6}>
         <AnimatePresence initial={false} onExitComplete={toggleLeaving}>
           <Row
-            key={displayMovies[0].id}
+            key={displayVideos[0].id}
             custom={slideDirection}
             variants={slideVariants}
             initial='hidden'
@@ -169,17 +177,17 @@ export default function Slider() {
                 width={width / offset}
                 leaving={leaving}
                 bgImg={makeImgPath(
-                  movies[firstIndex === 0 ? movies.length - 1 : firstIndex - 1]
+                  videos[firstIndex === 0 ? videos.length - 1 : firstIndex - 1]
                     .backdrop_path
                 )}
               />
             )}
-            {displayMovies.map((movie, i) => (
-              <Movie
-                key={movie.id + i}
+            {displayVideos.map((video, i) => (
+              <Video
+                key={video.id + i}
                 width={width / offset}
-                bgImg={makeImgPath(movie.backdrop_path)}
-                movie={movie}
+                bgImg={makeImgPath(video.backdrop_path)}
+                video={video}
                 offset={offset}
                 index={i}
               />
@@ -188,8 +196,8 @@ export default function Slider() {
               width={width / offset}
               leaving={leaving}
               bgImg={makeImgPath(
-                movies[
-                  firstIndex + offset >= movies.length ? 0 : firstIndex + offset
+                videos[
+                  firstIndex + offset >= videos.length ? 0 : firstIndex + offset
                 ].backdrop_path
               )}
             />

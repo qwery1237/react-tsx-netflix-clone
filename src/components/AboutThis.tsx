@@ -1,8 +1,9 @@
 import styled from 'styled-components';
-import { IMovieDetail } from '../api';
+import { IMovieDetail, ITvShowDetail } from '../api';
+import { useLocation } from 'react-router-dom';
 
 interface IAboutProps {
-  detail: IMovieDetail;
+  detail: IMovieDetail | ITvShowDetail;
 }
 const Wrapper = styled.div`
   padding: ${(props) => props.theme.paddingContainer};
@@ -34,19 +35,37 @@ const Item = styled.span`
   margin-left: 4px;
 `;
 export default function AboutThis({ detail }: IAboutProps) {
-  console.log(detail);
-
+  const { genre } = useLocation().state;
   return (
     <Wrapper>
       <Header>
-        About <Title>{detail.title}</Title>
+        About{' '}
+        <Title>
+          {(detail as IMovieDetail).title || (detail as ITvShowDetail).name}
+        </Title>
       </Header>
       <About>
+        {genre === 'tv' ? (
+          <Tag>
+            <Label>Creators:</Label>
+            <Items>
+              {(detail as ITvShowDetail).created_by.map(
+                (creator, i, creators) => (
+                  <Item key={creator.id}>
+                    {i === creators.length - 1
+                      ? creator.name
+                      : creator.name + ','}
+                  </Item>
+                )
+              )}
+            </Items>
+          </Tag>
+        ) : null}
         <Tag>
           <Label>Companies:</Label>
           <Items>
             {detail.production_companies.map((company, i, companies) => (
-              <Item>
+              <Item key={company.id}>
                 {i === companies.length - 1 ? company.name : company.name + ','}
               </Item>
             ))}
@@ -56,7 +75,7 @@ export default function AboutThis({ detail }: IAboutProps) {
           <Label>Contries:</Label>
           <Items>
             {detail.production_countries.map((country, i, countries) => (
-              <Item>
+              <Item key={country.name}>
                 {i === countries.length - 1 ? country.name : country.name + ','}
               </Item>
             ))}
@@ -66,7 +85,7 @@ export default function AboutThis({ detail }: IAboutProps) {
           <Label>Genres:</Label>
           <Items>
             {detail.genres.map((genre, i, genres) => (
-              <Item>
+              <Item key={genre.id}>
                 {i === genres.length - 1 ? genre.name : genre.name + ','}
               </Item>
             ))}

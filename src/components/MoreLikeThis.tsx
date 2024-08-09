@@ -1,10 +1,10 @@
 import { useQuery } from '@tanstack/react-query';
-import { useParams } from 'react-router-dom';
+import { useLocation, useParams } from 'react-router-dom';
 import styled from 'styled-components';
-import { getSimilarMovies } from '../api';
-import SimilarMovie from './SimilarMovie';
 import { useEffect, useRef, useState } from 'react';
 import { IoIosArrowDown, IoIosArrowUp } from 'react-icons/io';
+import SimilarVideo from './SimilarVideo';
+import { getSimilarVideos } from '../api';
 
 const Wrapper = styled.div`
   padding: ${(props) => props.theme.paddingContainer};
@@ -58,12 +58,14 @@ const NoContent = styled.div`
   margin-bottom: 40px;
 `;
 export default function MoreLikeThis() {
-  const { contentId } = useParams();
+  const { videoId } = useParams();
+  const { genre } = useLocation().state;
+
   const [showMore, setShowMore] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
-  const { data: similarMovies } = useQuery({
-    queryKey: ['similarMovie', contentId],
-    queryFn: () => getSimilarMovies(contentId),
+  const { data: similarVideos } = useQuery({
+    queryKey: ['similarVideos', videoId],
+    queryFn: () => getSimilarVideos(videoId, genre),
   });
   const toggleShowMore = () => setShowMore((prev) => !prev);
   useEffect(() => {
@@ -74,20 +76,18 @@ export default function MoreLikeThis() {
   return (
     <Wrapper>
       <Label>More Like This</Label>
-      {similarMovies?.length ? (
+      {similarVideos?.length ? (
         <Container ref={containerRef} showMore={showMore}>
           <Similars>
-            {similarMovies
-              .filter((movie) => movie.backdrop_path !== null)
-              .map((movie) => (
-                <SimilarMovie key={movie.id} movie={movie} />
-              ))}
+            {similarVideos.map((video) => (
+              <SimilarVideo key={video.id} video={video} />
+            ))}
           </Similars>
         </Container>
       ) : (
         <NoContent>No available content.</NoContent>
       )}
-      {similarMovies?.length ? (
+      {similarVideos?.length ? (
         <Divider showMore={showMore}>
           <Controller onClick={toggleShowMore}>
             {showMore ? <IoIosArrowUp /> : <IoIosArrowDown />}

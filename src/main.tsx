@@ -20,7 +20,7 @@ const router = createBrowserRouter([
     children: [
       { index: true, element: <Home /> },
       {
-        path: ':contentId',
+        path: ':videoId',
         element: <Home />,
       },
       { path: 'search', element: <Search /> },
@@ -44,9 +44,10 @@ const GlobalStyles = createGlobalStyle`
     padding: 0;
     box-sizing: border-box;
   }
+
   body {
   width: 100vw;
-  height: 300vh;
+  min-height: 100vh;
   font-weight: 300;
   color:${(props) => props.theme.white.darker};
   line-height: 1.2;

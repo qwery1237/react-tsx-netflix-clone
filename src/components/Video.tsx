@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
 import styled from 'styled-components';
-import { IMovie } from '../api';
+import { IMovie, ITVShow } from '../api';
 import { MdKeyboardArrowDown } from 'react-icons/md';
 import { useNavigate } from 'react-router-dom';
 import { useRef } from 'react';
@@ -9,7 +9,7 @@ interface IMovieProps {
   bgImg: string;
   width: number;
   offset: number;
-  movie: IMovie;
+  video: IMovie | ITVShow;
   index: number;
 }
 export interface IMovieCssProps {
@@ -55,13 +55,13 @@ const BtnWrapper = styled.div`
   width: 100%;
   display: flex;
   justify-content: end;
-  margin-bottom: 1rem;
+  margin-bottom: 18%;
 `;
 const Btn = styled.button`
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 2vw;
+  font-size: 3vw;
   padding: 2px;
   border-radius: 50%;
   border: solid 1.5px rgba(255, 255, 255, 0.5);
@@ -70,20 +70,27 @@ const Btn = styled.button`
     cursor: pointer;
     border-color: ${(props) => props.theme.white.darker};
   }
-  @media (max-width: 800px) {
+  @media (min-width: 800px) {
+    font-size: 2vw;
+  }
+`;
+const Title = styled.span`
+  @media (max-width: 500px) {
     font-size: 3vw;
   }
 `;
-const Title = styled.span``;
 const Rating = styled.div`
   color: #46d369;
   margin: 0.3vw 0;
+  @media (max-width: 500px) {
+    font-size: 3vw;
+  }
 `;
 
 const containerVariants = {
   hover: {
     borderRadius: '6px',
-    scale: 1.2,
+    scale: 1.4,
     y: -60,
     boxShadow: 'rgba(0, 0, 0, 0.75) 0px 3px 10px',
     minWidth: '150px',
@@ -104,18 +111,19 @@ const infoVariants = {
     transition: { delay: 0.5 },
   },
 };
-export default function Movie({
+export default function Video({
   width,
   bgImg,
-  movie,
+  video,
   offset,
   index,
 }: IMovieProps) {
   const navigate = useNavigate();
   const movieRef = useRef<HTMLDivElement>(null);
-
   const onClick = async () => {
-    navigate(String(movie.id));
+    navigate(String(video.id), {
+      state: { genre: (video as IMovie).title ? 'movie' : 'tv' },
+    });
   };
 
   return (
@@ -143,8 +151,9 @@ export default function Movie({
             <MdKeyboardArrowDown />
           </Btn>
         </BtnWrapper>
-        <Rating>{movie.vote_average.toFixed(1)}/10</Rating>
-        <Title>{movie.title}</Title>
+
+        <Rating>{video.vote_average.toFixed(1)}/10</Rating>
+        <Title>{(video as IMovie).title || (video as ITVShow).name}</Title>
       </Info>
     </Container>
   );

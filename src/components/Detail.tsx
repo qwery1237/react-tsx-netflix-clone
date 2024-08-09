@@ -1,8 +1,9 @@
 import styled from 'styled-components';
-import { IMovieDetail } from '../api';
-import { convertTime } from '../utils';
+import { IMovieDetail, ITvShowDetail } from '../api';
+import { convertTime, getSeasonsOrEpisodes } from '../utils';
+
 interface IDetailProps {
-  detail: IMovieDetail;
+  detail: IMovieDetail | ITvShowDetail;
 }
 const Wapper = styled.div`
   display: flex;
@@ -45,8 +46,14 @@ export default function Detail({ detail }: IDetailProps) {
       <MetaData>
         <Rating>{detail.vote_average.toFixed(1)}/10</Rating>
         <MetaSecondLine>
-          <ReleasedAt>{detail.release_date.slice(0, 4)}</ReleasedAt>
-          <Runtime>{convertTime(detail.runtime)}</Runtime>
+          <ReleasedAt>
+            {(detail as IMovieDetail).release_date?.slice(0, 4) ||
+              (detail as ITvShowDetail).first_air_date?.slice(0, 4)}
+          </ReleasedAt>
+          <Runtime>
+            {convertTime((detail as IMovieDetail).runtime) ||
+              getSeasonsOrEpisodes(detail as ITvShowDetail)}
+          </Runtime>
         </MetaSecondLine>
       </MetaData>
       <Genre>

@@ -245,3 +245,4 @@ ${BASE_URL}/tv/${category}?api_key=${API_KEY}`);
   );
   return tvShows;
 };
+export const getMovieGenres = async () => {};

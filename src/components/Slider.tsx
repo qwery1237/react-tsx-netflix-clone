@@ -6,10 +6,13 @@ import { getOffset, makeImgPath } from '../utils';
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa6';
 import Video, { IMovieCssProps } from './Video';
 import { IMovie, ITVShow } from '../api';
+import { useOutletContext } from 'react-router-dom';
+import { IOutletContext } from '../App';
 interface ISliderProps {
   videos: IMovie[] | ITVShow[];
   label: string;
   genre: string;
+  isLastSlider: boolean;
 }
 const SliderWrapper = styled.div`
   width: 100%;
@@ -39,10 +42,7 @@ const Row = styled(motion.div)`
   gap: 0.5vw;
 `;
 const PrevMovie = styled(motion.div)<IMovieCssProps>`
-  width: ${(props) => {
-    console.log(props.width, 'prev');
-    return props.width + 'px';
-  }};
+  width: ${(props) => props.width + 'px'};
   aspect-ratio: 11/6;
   border-radius: 3px;
   background-size: cover;
@@ -103,8 +103,9 @@ const slideVariants = {
   },
 };
 
-export default function Slider({ videos, label }: ISliderProps) {
+export default function Slider({ videos, label, isLastSlider }: ISliderProps) {
   const { width } = useScreenSize();
+  const { handleOutletRendered } = useOutletContext<IOutletContext>();
   const [offset, setOffset] = useState(0);
   const [showPrev, setShowPrev] = useState(false);
   const [firstIndex, setFirstIndex] = useState(0);
@@ -134,7 +135,10 @@ export default function Slider({ videos, label }: ISliderProps) {
     setFirstIndex((prev) => (prev - offset + maxIndex) % maxIndex);
     setLastIndex((prev) => (prev - offset + maxIndex) % maxIndex);
   };
-
+  useEffect(() => {
+    if (!isLastSlider) return;
+    handleOutletRendered(true);
+  }, []);
   useEffect(() => {
     const newOffset = getOffset(width);
     offset !== newOffset && setOffset(newOffset);
@@ -143,10 +147,6 @@ export default function Slider({ videos, label }: ISliderProps) {
     if (!videos) return;
     setLastIndex((firstIndex + offset - 1) % videos.length);
   }, [offset, firstIndex, videos]);
-
-  if (!videos) {
-    return <></>;
-  }
 
   const maxIndex = videos.length;
   const displayVideos =

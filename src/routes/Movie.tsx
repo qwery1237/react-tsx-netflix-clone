@@ -1,3 +1,3 @@
 export default function Movie() {
-  return <div>Movie</div>;
+  return <div style={{ height: '300vh' }}>Movie</div>;
 }

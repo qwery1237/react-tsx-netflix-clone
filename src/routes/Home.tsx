@@ -14,7 +14,7 @@ const ListWrapper = styled.div`
 `;
 export default function Home() {
   const showPreview = useMatch('/react-tsx-netflix-clone/:contentId') !== null;
-  const { data: videoLists } = useQuery({
+  const { data: videoLists, isLoading } = useQuery({
     queryKey: ['videos', 'all'],
     queryFn: getAllVideos,
   });
@@ -23,25 +23,23 @@ export default function Home() {
     if (!videoLists) return;
 
     setBannerMovie(videoLists[0].results[0] as IMovie);
-  }, [videoLists]);
+  }, [isLoading]);
+  if (isLoading || !bannerMovie.id) return <></>;
   return (
     <>
-      {videoLists && bannerMovie.id && (
-        <>
-          <Banner />
-          <ListWrapper>
-            {videoLists.map((list) => (
-              <Slider
-                key={list.label}
-                videos={list.results}
-                label={list.label}
-                genre={list.genre}
-              />
-            ))}
-          </ListWrapper>
-          {showPreview && <Preview />}
-        </>
-      )}
+      <Banner />
+      <ListWrapper>
+        {videoLists?.map((list, i) => (
+          <Slider
+            key={list.label}
+            videos={list.results}
+            label={list.label}
+            genre={list.genre}
+            isLastSlider={i === videoLists.length - 1}
+          />
+        ))}
+      </ListWrapper>
+      {showPreview && <Preview />}
     </>
   );
 }

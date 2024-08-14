@@ -66,6 +66,7 @@ const GlobalStyles = createGlobalStyle`
     border:none;
     outline: none;
   }
+  
 `;
 
 ReactDOM.createRoot(document.getElementById('root')!).render(

@@ -1,11 +1,14 @@
 import { motion, useAnimation } from 'framer-motion';
-import { Link, useMatch } from 'react-router-dom';
+import { Link, useLocation, useMatch } from 'react-router-dom';
 import styled from 'styled-components';
 import LogoSVG from './LogoSVG';
 import { FiSearch } from 'react-icons/fi';
 import { useEffect, useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import { currentYState } from '../atom';
+import useScreenSize from '../hooks/useScreenSize';
+import NavLinks from './NavLinks';
+import DropDownNav from './DropDownNav';
 
 const Nav = styled(motion.nav)`
   width: 100%;
@@ -21,27 +24,10 @@ const Nav = styled(motion.nav)`
     rgba(0, 0, 0, 0.7) 10%,
     transparent
   );
+  overflow-y: visible;
 `;
-const Logo = styled(Link)`
-  margin-right: 40px;
-`;
+const Logo = styled(Link)``;
 
-const Menu = styled.ul`
-  flex: 1;
-  display: flex;
-  gap: 24px;
-`;
-const Item = styled.li<{ urlMatch?: boolean }>`
-  display: flex;
-  align-items: center;
-  font-size: small;
-  ${(props) =>
-    props.urlMatch && 'font-weight:700; pointer-events:none; cursor:default'};
-  transition: opacity ease-in-out 0.4s;
-  &:hover {
-    opacity: 0.6;
-  }
-`;
 const Search = styled.form`
   position: absolute;
   right: 4%;
@@ -72,43 +58,34 @@ const navVariant = {
   top: {
     backgroundColor: 'rgba(20, 20, 20,0)',
   },
-  scroll: { backgroundColor: 'rgba(20, 20, 20,1)' },
+  scroll: { backgroundColor: 'rgba(20,20,20,1)' },
 };
 export default function Header() {
+  const { width } = useScreenSize();
   const [searchActive, setSearchActive] = useState(false);
   const currentY = useRecoilValue(currentYState);
   const navAnimation = useAnimation();
+  const location = useLocation();
+  const homeMatch = useMatch('/react-tsx-netflix-clone/') !== null;
   useEffect(() => {
     if (currentY > 0) {
       navAnimation.start('scroll');
     } else {
-      navAnimation.start('top');
+      navAnimation.start(homeMatch ? 'top' : 'scroll');
     }
-  }, [currentY]);
+  }, [currentY, location]);
 
   const baseUrl = '/react-tsx-netflix-clone/';
-  const homeMatch = useMatch(baseUrl) !== null;
-  const tvMatch = useMatch(baseUrl + 'tv') !== null;
-  const movieMatch = useMatch(baseUrl + 'movie') !== null;
 
   const openSearchBar = () => setSearchActive(true);
   const closeSearchBar = () => setSearchActive(false);
+
   return (
     <Nav variants={navVariant} animate={navAnimation} initial='top'>
-      <Logo to={'/react-tsx-netflix-clone/'}>
+      <Logo to={baseUrl}>
         <LogoSVG />
       </Logo>
-      <Menu>
-        <Item urlMatch={homeMatch}>
-          <Link to={baseUrl}>Home</Link>
-        </Item>
-        <Item urlMatch={tvMatch}>
-          <Link to={baseUrl + 'tv'}>TV Shows</Link>
-        </Item>
-        <Item urlMatch={movieMatch}>
-          <Link to={baseUrl + 'movie'}>Movies</Link>
-        </Item>
-      </Menu>
+      {width > 500 ? <NavLinks /> : <DropDownNav />}
       <Search>
         {searchActive ? (
           <SearchBar initial={{ scaleX: 0 }} animate={{ scaleX: 1 }}>

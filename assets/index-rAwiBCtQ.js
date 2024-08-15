@@ -109,12 +109,12 @@ Error generating stack: `+o.message+`
   }
 `,G$=B.div`
   flex: 0;
-  min-width: 200px;
+  min-width: 250px;
   position: relative;
-  top: 100px;
-  left: -106px;
+  top: 130px;
+  left: -156px;
   z-index: 3;
-  width: 200px;
+  width: 250px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -128,7 +128,7 @@ Error generating stack: `+o.message+`
   margin-bottom: -31px;
 `,ph=B(Cr)`
   width: 100%;
-  height: 40px;
+  height: 50px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -233,7 +233,7 @@ ${Qs}/tv/${n}?api_key=${Gs}`),i=yv(r.results);return n==="top_rated"?{label:`${X
   top: 120px;
   border: 1px solid hsla(0, 0%, 100%, 0.15);
   background-color: rgba(0, 0, 0, 0.95);
-  @media (max-width: 610px) {
+  @media (max-width: 670px) {
     width: 300px;
     grid-template-columns: repeat(2, 1fr);
   }

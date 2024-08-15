@@ -49,7 +49,7 @@ const GlobalStyles = createGlobalStyle`
   font-weight: 300;
   color:${(props) => props.theme.white.darker};
   line-height: 1.2;
-  /* background-color: ${(props) => props.theme.black.veryDark}; */
+  background-color: ${(props) => props.theme.black.veryDark};
   }
   body::-webkit-scrollbar {
     width: 0;

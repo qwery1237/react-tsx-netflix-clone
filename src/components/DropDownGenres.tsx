@@ -42,7 +42,7 @@ const Icon = styled.div`
   align-items: center;
 `;
 const Genres = styled.div`
-  width: 440px;
+  width: 450px;
   display: grid;
   padding: 5px 10px;
   grid-template-columns: repeat(3, 1fr);
@@ -50,11 +50,23 @@ const Genres = styled.div`
   top: 120px;
   border: 1px solid hsla(0, 0%, 100%, 0.15);
   background-color: rgba(0, 0, 0, 0.95);
+  @media (max-width: 610px) {
+    width: 300px;
+    grid-template-columns: repeat(2, 1fr);
+  }
+  @media (max-width: 500px) {
+    width: 60vw;
+    font-size: 3.2vw;
+    padding: 1vw 2vw;
+  }
 `;
 const Genre = styled(Link)`
   line-height: 24px;
   &:hover {
     text-decoration: underline;
+  }
+  @media (max-width: 500px) {
+    line-height: 4.8vw;
   }
 `;
 export default function DropDownGenres({ genres }: IProps) {

@@ -118,6 +118,7 @@ Error generating stack: `+o.message+`
   display: flex;
   flex-direction: column;
   align-items: center;
+  border: 1px solid hsla(0, 0%, 100%, 0.15);
   border-top: solid 2px white;
 `,Q$=B.span`
   font-size: 24px;

@@ -17,7 +17,7 @@ const Nav = styled(motion.nav)`
   height: 68px;
   position: fixed;
   top: 0;
-  z-index: 3;
+  z-index: 4;
   padding: ${(props) => props.theme.paddingContainer};
   background-image: linear-gradient(
     180deg,

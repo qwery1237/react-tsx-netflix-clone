@@ -4,6 +4,10 @@ import { capitalizeLabel, filterVideos } from './utils';
 const API_KEY = 'a467db69048c41114e360cf1b32a063f';
 const BASE_URL = 'https://api.themoviedb.org/3';
 
+export interface IGenre {
+  id: number;
+  name: string;
+}
 export interface IVideo {
   label: string;
   results: IMovie[] | ITVShow[];
@@ -245,4 +249,17 @@ ${BASE_URL}/tv/${category}?api_key=${API_KEY}`);
   );
   return tvShows;
 };
-export const getMovieGenres = async () => {};
+export const getMovieGenres = async () => {
+  const { data } = await axios.get(
+    `${BASE_URL}/genre/movie/list?api_key=${API_KEY}`
+  );
+  const genres: IGenre[] = data.genres;
+  return genres;
+};
+export const getTvGenres = async () => {
+  const { data } = await axios.get(
+    `${BASE_URL}/genre/tv/list?api_key=${API_KEY}`
+  );
+  const genres: IGenre[] = data.genres;
+  return genres;
+};

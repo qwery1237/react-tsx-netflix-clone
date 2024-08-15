@@ -16,13 +16,14 @@ const Page = styled.div<{ showContent: boolean }>`
 function App() {
   const { scrollY } = useScroll();
   const setCurrentY = useSetRecoilState(currentYState);
-  const [isOutletRendered, setIsOutletRendered] = useState(false);
+  const [isOutletRendered, setIsOutletRendered] = useState(true);
   useMotionValueEvent(scrollY, 'change', (crrY) => {
     setCurrentY(crrY);
   });
   const handleOutletRendered = (isRendered: boolean) => {
     setIsOutletRendered(isRendered);
   };
+
   return (
     <Page showContent={isOutletRendered}>
       <Header />

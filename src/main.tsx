@@ -5,9 +5,7 @@ import './index.css';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import Home from './routes/Home.tsx';
 import Tv from './routes/Tv.tsx';
-import TvById from './routes/TvById.tsx';
 import Movie from './routes/Movie.tsx';
-import MovieById from './routes/MovieById.tsx';
 import { theme } from './theme.ts';
 import { createGlobalStyle, ThemeProvider } from 'styled-components';
 import Search from './routes/Search.tsx';
@@ -28,12 +26,12 @@ const router = createBrowserRouter([
         path: 'tv',
         element: <Tv />,
       },
-      { path: 'tv/:tvId', element: <TvById /> },
+      { path: 'tv/:genreId', element: <Tv /> },
       {
         path: 'movie',
         element: <Movie />,
       },
-      { path: 'movie/:movieId', element: <MovieById /> },
+      { path: 'movie/:genreId', element: <Movie /> },
     ],
   },
 ]);
@@ -51,7 +49,7 @@ const GlobalStyles = createGlobalStyle`
   font-weight: 300;
   color:${(props) => props.theme.white.darker};
   line-height: 1.2;
-  background-color: ${(props) => props.theme.black.veryDark};
+  /* background-color: ${(props) => props.theme.black.veryDark}; */
   }
   body::-webkit-scrollbar {
     width: 0;

@@ -21,12 +21,12 @@ const MenuTrigger = styled.div`
 `;
 const MenuNav = styled.div`
   flex: 0;
-  min-width: 200px;
+  min-width: 250px;
   position: relative;
-  top: 100px;
-  left: -106px;
+  top: 130px;
+  left: -156px;
   z-index: 3;
-  width: 200px;
+  width: 250px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -42,7 +42,7 @@ const NavArrow = styled.span`
 `;
 const NavItem = styled(Link)<{ urlMatch?: boolean }>`
   width: 100%;
-  height: 40px;
+  height: 50px;
   display: flex;
   justify-content: center;
   align-items: center;

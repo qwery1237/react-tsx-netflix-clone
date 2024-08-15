@@ -50,7 +50,7 @@ const Genres = styled.div`
   top: 120px;
   border: 1px solid hsla(0, 0%, 100%, 0.15);
   background-color: rgba(0, 0, 0, 0.95);
-  @media (max-width: 610px) {
+  @media (max-width: 670px) {
     width: 300px;
     grid-template-columns: repeat(2, 1fr);
   }

@@ -47,7 +47,7 @@ export default function Movie() {
 
     const newBanner = filtered[0]?.results[0] || null;
     setBannerMovie(newBanner);
-  }, [genreId]);
+  }, [genreId, isLoading]);
 
   if (isLoading || !bannerMovie) return <></>;
   return (

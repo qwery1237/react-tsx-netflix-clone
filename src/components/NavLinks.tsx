@@ -1,4 +1,4 @@
-import { Link, useMatch } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 import { BASE_URL } from '../constants';
 interface IProps {
@@ -25,9 +25,10 @@ const Item = styled.li<{ urlMatch?: boolean }>`
   }
 `;
 export default function NavLinks({ handleOutletRendered }: IProps) {
-  const homeMatch = useMatch(BASE_URL) !== null;
-  const tvMatch = useMatch(BASE_URL + 'tv') !== null;
-  const movieMatch = useMatch(BASE_URL + 'movie') !== null;
+  const { pathname } = useLocation();
+  const tvMatch = pathname.includes('tv');
+  const movieMatch = pathname.includes('movie');
+  const homeMatch = !tvMatch && !movieMatch;
   const handleRendered = () => handleOutletRendered(false);
   return (
     <Wrapper>

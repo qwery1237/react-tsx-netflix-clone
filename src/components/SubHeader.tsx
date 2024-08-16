@@ -53,25 +53,26 @@ export default function SubHeader() {
   const [genre, setGenre] = useState('');
   const [parentGenre, setParentGenre] = useState('');
   const currentY = useRecoilValue(currentYState);
-  const location = useLocation();
   const isMovies = pathname.includes('movie');
   const isTvShows = pathname.includes('tv');
   const isHome = !isMovies && !isTvShows;
-  const { data: movieGenres } = useQuery({
+  const { data: movieGenres, isLoading: movieGenreLoading } = useQuery({
     queryKey: ['genres', 'movie'],
     queryFn: getMovieGenres,
-    enabled: isMovies && !genreId,
+    enabled: isMovies,
   });
-  const { data: tvGenres } = useQuery({
+  const { data: tvGenres, isLoading: tvGenreLoading } = useQuery({
     queryKey: ['genres', 'tv'],
     queryFn: getTvGenres,
-    enabled: isTvShows && !genreId,
+    enabled: isTvShows,
   });
   const navAnimation = useAnimation();
   const handleScroll = () => window.scrollTo(0, 0);
+
   useEffect(() => {
     if (!isHome) {
       setShowThis(true);
+      if (movieGenreLoading || tvGenreLoading) return;
       if (genreId) {
         const genre = isMovies
           ? movieGenres?.find((genre) => genre.id === +genreId)?.name
@@ -91,7 +92,7 @@ export default function SubHeader() {
       return;
     }
     setShowThis(false);
-  }, [location]);
+  }, [pathname, movieGenreLoading, tvGenreLoading]);
   useEffect(() => {
     if (currentY > 0) {
       navAnimation.start('scroll');

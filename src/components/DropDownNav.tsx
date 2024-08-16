@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { IoCaretDownOutline, IoCaretUpOutline } from 'react-icons/io5';
-import { Link, useLocation, useMatch } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 import { BASE_URL } from '../constants';
 interface IProps {
@@ -67,10 +67,10 @@ export default function DropDownNav({ handleOutletRendered }: IProps) {
     mouseReturnedToMenu: false,
   });
 
-  const homeMatch = useMatch(BASE_URL) !== null;
-  const tvMatch = useMatch(BASE_URL + 'tv') !== null;
-  const movieMatch = useMatch(BASE_URL + 'movie') !== null;
-  const location = useLocation();
+  const { pathname } = useLocation();
+  const tvMatch = pathname.includes('tv');
+  const movieMatch = pathname.includes('movie');
+  const homeMatch = !tvMatch && !movieMatch;
 
   const handleOpenMenu = (component: 'menu' | 'trigger') => {
     if (component === 'menu') {
@@ -107,7 +107,7 @@ export default function DropDownNav({ handleOutletRendered }: IProps) {
       mouseOnTrigger: false,
       mouseReturnedToMenu: false,
     });
-  }, [location]);
+  }, [pathname]);
   return (
     <>
       <MenuTrigger

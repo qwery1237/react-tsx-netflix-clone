@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Link, useLocation, useParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 import { currentYState } from '../atom';
@@ -8,7 +8,9 @@ import { getMovieGenres, getTvGenres } from '../api';
 import { useQuery } from '@tanstack/react-query';
 import DropDownGenres from './DropDownGenres';
 import { FaAngleRight } from 'react-icons/fa6';
-
+interface IProps {
+  handleOutletRendered: (isRendered: boolean) => void;
+}
 const Wrapper = styled(motion.div)`
   width: 100%;
   display: flex;
@@ -30,7 +32,7 @@ const GenreWrapper = styled.div<{ parentGenreExist: boolean }>`
     margin-right: 4.8vw;
   }
 `;
-const ParentGenre = styled(Link)`
+const ParentGenre = styled.div`
   cursor: pointer;
 `;
 const Genre = styled.div`
@@ -46,7 +48,8 @@ const navVariant = {
   },
   scroll: { backgroundColor: 'rgba(20,20,20,1)' },
 };
-export default function SubHeader() {
+export default function SubHeader({ handleOutletRendered }: IProps) {
+  const navigate = useNavigate();
   const { genreId } = useParams();
   const { pathname } = useLocation();
   const [showThis, setShowThis] = useState(false);
@@ -67,8 +70,11 @@ export default function SubHeader() {
     enabled: isTvShows,
   });
   const navAnimation = useAnimation();
-  const handleScroll = () => window.scrollTo(0, 0);
-
+  const handleClick = () => {
+    handleOutletRendered(false);
+    navigate(`/react-tsx-netflix-clone/${isMovies ? 'movie' : 'tv'}`);
+    window.location.reload();
+  };
   useEffect(() => {
     if (!isHome) {
       setShowThis(true);
@@ -105,17 +111,15 @@ export default function SubHeader() {
       {showThis ? (
         <Wrapper variants={navVariant} animate={navAnimation}>
           <GenreWrapper parentGenreExist={!!genreId}>
-            <ParentGenre
-              onClick={handleScroll}
-              to={`/react-tsx-netflix-clone/${isMovies ? 'movie' : 'tv'}`}
-            >
-              {parentGenre}
-            </ParentGenre>
+            <ParentGenre onClick={handleClick}>{parentGenre}</ParentGenre>
             {genreId ? <FaAngleRight /> : null}
             <Genre>{genre}</Genre>
           </GenreWrapper>
 
-          <DropDownGenres genres={isMovies ? movieGenres : tvGenres} />
+          <DropDownGenres
+            handleOutletRendered={handleOutletRendered}
+            genres={isMovies ? movieGenres : tvGenres}
+          />
         </Wrapper>
       ) : null}
     </>

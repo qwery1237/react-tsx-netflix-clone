@@ -28,7 +28,7 @@ function App() {
   return (
     <Page showContent={isOutletRendered}>
       <Header handleOutletRendered={handleOutletRendered} />
-      <SubHeader />
+      <SubHeader handleOutletRendered={handleOutletRendered} />
       <Outlet context={{ handleOutletRendered }} />
       <Footer />
     </Page>

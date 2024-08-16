@@ -49,6 +49,7 @@ export default function Tv() {
     const newBanner = filtered[0]?.results[0] || null;
     setBannerTvShow(newBanner);
   }, [genreId, isLoading]);
+
   if (isLoading || !bannerTvShow) return <></>;
   return (
     <Wrapper>

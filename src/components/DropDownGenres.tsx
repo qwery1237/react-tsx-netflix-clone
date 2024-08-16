@@ -1,4 +1,4 @@
-import { Link, useLocation, useParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { IGenre } from '../api';
 import styled from 'styled-components';
 import { useEffect, useState } from 'react';
@@ -7,6 +7,7 @@ import { useScroll } from 'framer-motion';
 
 interface IProps {
   genres?: IGenre[];
+  handleOutletRendered: (isRendered: boolean) => void;
 }
 const Wrapper = styled.div``;
 const Trigger = styled.div<{ scrollY: number }>`
@@ -60,8 +61,9 @@ const Genres = styled.div`
     padding: 1vw 2vw;
   }
 `;
-const Genre = styled(Link)`
+const Genre = styled.div`
   line-height: 24px;
+  cursor: pointer;
   &:hover {
     text-decoration: underline;
   }
@@ -69,12 +71,20 @@ const Genre = styled(Link)`
     line-height: 4.8vw;
   }
 `;
-export default function DropDownGenres({ genres }: IProps) {
+export default function DropDownGenres({
+  genres,
+  handleOutletRendered,
+}: IProps) {
+  const navigate = useNavigate();
   const { pathname } = useLocation();
   const { genreId } = useParams();
   const { scrollY } = useScroll();
   const [showMenu, setShowMenu] = useState(false);
-  const handleScroll = () => window.scrollTo(0, 0);
+  const handleClick = (genreId: number) => {
+    handleOutletRendered(false);
+    navigate(pathname + '/' + genreId);
+    window.location.reload();
+  };
   useEffect(() => {
     setShowMenu(false);
   }, [pathname]);
@@ -92,11 +102,7 @@ export default function DropDownGenres({ genres }: IProps) {
       {!genreId && showMenu ? (
         <Genres>
           {genres.map((genre) => (
-            <Genre
-              onClick={handleScroll}
-              to={pathname + '/' + genre.id}
-              key={genre.id}
-            >
+            <Genre onClick={() => handleClick(genre.id)} key={genre.id}>
               {genre.name}
             </Genre>
           ))}

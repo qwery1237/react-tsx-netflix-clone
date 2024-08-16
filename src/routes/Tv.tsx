@@ -22,12 +22,33 @@ export default function Tv() {
   const [bannerTvShow, setBannerTvShow] = useState<ITVShow | null>(null);
   const [searchParams] = useSearchParams();
   const showPreview = !!searchParams.get('videoId');
+
   useEffect(() => {
     if (!tvLists) return;
+    if (!genreId) {
+      setBannerTvShow(tvLists[0].results[0]);
+      return;
+    }
+    const filtered = tvLists
+      .map((list) => {
+        const filterdList = {
+          ...list,
+          results: list.results.filter((video) =>
+            video.genre_ids.includes(+genreId)
+          ),
+        };
+        if (filterdList.results.length === 0) return;
+        return filterdList;
+      })
+      .filter((list) => list);
+    if (filtered.length === 0) {
+      setBannerTvShow(null);
+      return;
+    }
 
-    setBannerTvShow(tvLists[0].results[0]);
-  }, [isLoading]);
-
+    const newBanner = filtered[0]?.results[0] || null;
+    setBannerTvShow(newBanner);
+  }, [genreId]);
   if (isLoading || !bannerTvShow) return <></>;
   return (
     <Wrapper>

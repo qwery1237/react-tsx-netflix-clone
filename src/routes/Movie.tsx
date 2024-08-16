@@ -21,11 +21,33 @@ export default function Movie() {
   const [bannerMovie, setBannerMovie] = useState<IMovie | null>(null);
   const [searchParams] = useSearchParams();
   const showPreview = !!searchParams.get('videoId');
+
   useEffect(() => {
     if (!movieLists) return;
+    if (!genreId) {
+      setBannerMovie(movieLists[0].results[0]);
+      return;
+    }
+    const filtered = movieLists
+      .map((list) => {
+        const filterdList = {
+          ...list,
+          results: list.results.filter((video) =>
+            video.genre_ids.includes(+genreId)
+          ),
+        };
+        if (filterdList.results.length === 0) return;
+        return filterdList;
+      })
+      .filter((list) => list);
+    if (filtered.length === 0) {
+      setBannerMovie(null);
+      return;
+    }
 
-    setBannerMovie(movieLists[0].results[0]);
-  }, [isLoading]);
+    const newBanner = filtered[0]?.results[0] || null;
+    setBannerMovie(newBanner);
+  }, [genreId]);
 
   if (isLoading || !bannerMovie) return <></>;
   return (

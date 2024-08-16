@@ -2,6 +2,10 @@ import { useEffect, useState } from 'react';
 import { IoCaretDownOutline, IoCaretUpOutline } from 'react-icons/io5';
 import { Link, useLocation, useMatch } from 'react-router-dom';
 import styled from 'styled-components';
+import { BASE_URL } from '../constants';
+interface IProps {
+  handleOutletRendered: (isRendered: boolean) => void;
+}
 interface IShowMenuProps {
   mouseOnTrigger: boolean;
   mouseOnMenu: boolean;
@@ -56,16 +60,16 @@ const NavItem = styled(Link)<{ urlMatch?: boolean }>`
     background-color: rgba(0, 0, 0, 0.8);
   }
 `;
-export default function DropDownNav() {
+export default function DropDownNav({ handleOutletRendered }: IProps) {
   const [showMenu, setShowMenu] = useState<IShowMenuProps>({
     mouseOnTrigger: false,
     mouseOnMenu: false,
     mouseReturnedToMenu: false,
   });
-  const baseUrl = '/react-tsx-netflix-clone/';
-  const homeMatch = useMatch(baseUrl) !== null;
-  const tvMatch = useMatch(baseUrl + 'tv') !== null;
-  const movieMatch = useMatch(baseUrl + 'movie') !== null;
+
+  const homeMatch = useMatch(BASE_URL) !== null;
+  const tvMatch = useMatch(BASE_URL + 'tv') !== null;
+  const movieMatch = useMatch(BASE_URL + 'movie') !== null;
   const location = useLocation();
 
   const handleOpenMenu = (component: 'menu' | 'trigger') => {
@@ -96,6 +100,7 @@ export default function DropDownNav() {
       300
     );
   };
+  const handleRendered = () => handleOutletRendered(false);
   useEffect(() => {
     setShowMenu({
       mouseOnMenu: false,
@@ -120,13 +125,21 @@ export default function DropDownNav() {
           <NavArrow>
             <IoCaretUpOutline />
           </NavArrow>
-          <NavItem to={baseUrl} urlMatch={homeMatch}>
+          <NavItem onClick={handleRendered} to={BASE_URL} urlMatch={homeMatch}>
             Home
           </NavItem>
-          <NavItem to={baseUrl + 'tv'} urlMatch={tvMatch}>
+          <NavItem
+            onClick={handleRendered}
+            to={BASE_URL + 'tv'}
+            urlMatch={tvMatch}
+          >
             TV Shows
           </NavItem>
-          <NavItem to={baseUrl + 'movie'} urlMatch={movieMatch}>
+          <NavItem
+            onClick={handleRendered}
+            to={BASE_URL + 'movie'}
+            urlMatch={movieMatch}
+          >
             Movies
           </NavItem>
         </MenuNav>

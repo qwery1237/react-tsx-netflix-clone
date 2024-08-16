@@ -7,6 +7,7 @@ import Footer from './components/Footer';
 import { useState } from 'react';
 import styled from 'styled-components';
 import SubHeader from './components/SubHeader';
+
 export interface IOutletContext {
   handleOutletRendered: (isRendered: boolean) => void;
 }
@@ -16,7 +17,7 @@ const Page = styled.div<{ showContent: boolean }>`
 function App() {
   const { scrollY } = useScroll();
   const setCurrentY = useSetRecoilState(currentYState);
-  const [isOutletRendered, setIsOutletRendered] = useState(true);
+  const [isOutletRendered, setIsOutletRendered] = useState(false);
   useMotionValueEvent(scrollY, 'change', (crrY) => {
     setCurrentY(crrY);
   });
@@ -26,7 +27,7 @@ function App() {
 
   return (
     <Page showContent={isOutletRendered}>
-      <Header />
+      <Header handleOutletRendered={handleOutletRendered} />
       <SubHeader />
       <Outlet context={{ handleOutletRendered }} />
       <Footer />

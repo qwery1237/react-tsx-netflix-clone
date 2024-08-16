@@ -2,7 +2,7 @@ import { motion } from 'framer-motion';
 import styled from 'styled-components';
 import { IMovie, ITVShow } from '../api';
 import { MdKeyboardArrowDown } from 'react-icons/md';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useRef } from 'react';
 
 interface IMovieProps {
@@ -120,8 +120,9 @@ export default function Video({
 }: IMovieProps) {
   const navigate = useNavigate();
   const movieRef = useRef<HTMLDivElement>(null);
+  const { pathname } = useLocation();
   const onClick = async () => {
-    navigate(String(video.id), {
+    navigate(String(`${pathname}?videoId=${video.id}`), {
       state: { genre: (video as IMovie).title ? 'movie' : 'tv' },
     });
   };

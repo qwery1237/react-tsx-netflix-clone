@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from 'framer-motion';
-import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 import { currentYState } from '../atom';
@@ -108,7 +108,9 @@ const Title = styled.h1`
 export default function Preview() {
   const navigate = useNavigate();
   const currentY = useRecoilValue(currentYState);
-  const { videoId } = useParams();
+  const [searchParams] = useSearchParams();
+  const videoId = searchParams.get('videoId') || '';
+
   const { genre } = useLocation().state;
 
   const { data: detail } = useQuery({
@@ -131,7 +133,7 @@ export default function Preview() {
   }, []);
 
   return (
-    <AnimatePresence onExitComplete={() => navigate('../')}>
+    <AnimatePresence onExitComplete={() => navigate(-1)}>
       {showModal && detail && (
         <Wrapper
           initial={{ opacity: 0 }}

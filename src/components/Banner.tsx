@@ -2,9 +2,10 @@ import { motion } from 'framer-motion';
 import { SiNetflix } from 'react-icons/si';
 import styled from 'styled-components';
 import { makeImgPath } from '../utils';
-import { useRecoilValue } from 'recoil';
-import { bannerMovieState } from '../atom';
-
+import { IMovie, ITVShow } from '../api';
+interface IProps {
+  banner: IMovie | ITVShow;
+}
 const BannerWrapper = styled.div<{ bgImg: string }>`
   width: 100vw;
   height: 56.25vw;
@@ -58,9 +59,7 @@ const overviewVariants = {
   initial: { opacity: 1, y: 0 },
   animate: { opacity: 0, y: '25px', transition: { delay: 4, duration: 0.3 } },
 };
-export default function Banner() {
-  const banner = useRecoilValue(bannerMovieState);
-
+export default function Banner({ banner }: IProps) {
   if (!banner) {
     return <></>;
   }
@@ -76,7 +75,10 @@ export default function Banner() {
           <SiNetflix />
           SERIES
         </TitleLogo>
-        <Title>{banner.title.toUpperCase()}</Title>
+        <Title>
+          {(banner as IMovie).title?.toUpperCase() ||
+            (banner as ITVShow).name?.toUpperCase()}
+        </Title>
       </TitleWrapper>
       <Overview variants={overviewVariants} initial='initial' animate='animate'>
         {banner.overview}

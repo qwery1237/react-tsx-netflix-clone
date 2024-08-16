@@ -42,3 +42,20 @@ export const filterVideos = (videos: IMovie[] | ITVShow[]) => {
       video.backdrop_path !== null && video.overview && video.vote_count
   );
 };
+export const getSlicedVideos = (
+  videos: IMovie[] | ITVShow[],
+  startIndex: number,
+  offset: number
+) => {
+  if (videos.length <= offset) return videos;
+  if (startIndex + offset > videos.length) {
+    const first = videos.slice(startIndex);
+    const last = videos.slice(0, startIndex + offset - videos.length);
+    const sliced = [...first, ...last];
+    console.log(sliced);
+
+    return sliced;
+  }
+  const sliced = videos.slice(startIndex, startIndex + offset);
+  return sliced;
+};

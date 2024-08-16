@@ -9,7 +9,10 @@ import { currentYState } from '../atom';
 import useScreenSize from '../hooks/useScreenSize';
 import NavLinks from './NavLinks';
 import DropDownNav from './DropDownNav';
-
+import { BASE_URL } from '../constants';
+interface IProps {
+  handleOutletRendered: (isRendered: boolean) => void;
+}
 const Nav = styled(motion.nav)`
   width: 100%;
   display: flex;
@@ -60,13 +63,14 @@ const navVariant = {
   },
   scroll: { backgroundColor: 'rgba(20,20,20,1)' },
 };
-export default function Header() {
+export default function Header({ handleOutletRendered }: IProps) {
   const { width } = useScreenSize();
   const [searchActive, setSearchActive] = useState(false);
   const currentY = useRecoilValue(currentYState);
   const navAnimation = useAnimation();
   const location = useLocation();
   const homeMatch = useMatch('/react-tsx-netflix-clone/') !== null;
+
   useEffect(() => {
     if (currentY > 0) {
       navAnimation.start('scroll');
@@ -75,17 +79,21 @@ export default function Header() {
     }
   }, [currentY, location]);
 
-  const baseUrl = '/react-tsx-netflix-clone/';
-
   const openSearchBar = () => setSearchActive(true);
   const closeSearchBar = () => setSearchActive(false);
-
   return (
     <Nav variants={navVariant} animate={navAnimation} initial='top'>
-      <Logo to={baseUrl}>
+      <Logo
+        to={BASE_URL}
+        onClick={() => handleOutletRendered(homeMatch ? true : false)}
+      >
         <LogoSVG />
       </Logo>
-      {width > 500 ? <NavLinks /> : <DropDownNav />}
+      {width > 500 ? (
+        <NavLinks handleOutletRendered={handleOutletRendered} />
+      ) : (
+        <DropDownNav handleOutletRendered={handleOutletRendered} />
+      )}
       <Search>
         {searchActive ? (
           <SearchBar initial={{ scaleX: 0 }} animate={{ scaleX: 1 }}>

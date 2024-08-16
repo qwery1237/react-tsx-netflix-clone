@@ -2,7 +2,7 @@ import axios from 'axios';
 import { capitalizeLabel, filterVideos } from './utils';
 
 const API_KEY = 'a467db69048c41114e360cf1b32a063f';
-const BASE_URL = 'https://api.themoviedb.org/3';
+const API_BASE_URL = 'https://api.themoviedb.org/3';
 
 export interface IGenre {
   id: number;
@@ -173,7 +173,7 @@ export const getMovieDetail = async (videoId?: string, genre?: string) => {
   if (!videoId || !genre) return;
 
   const { data } = await axios.get<IMovieDetail | ITvShowDetail>(`
-${BASE_URL}/${genre}/${videoId}?api_key=${API_KEY}`);
+${API_BASE_URL}/${genre}/${videoId}?api_key=${API_KEY}`);
 
   return data;
 };
@@ -182,13 +182,13 @@ export const getSimilarVideos = async (videoId?: string, genre?: string) => {
   if (!videoId || !genre) return;
 
   const { data } = await axios.get(`
-    ${BASE_URL}/${genre}/${videoId}/similar?api_key=${API_KEY}`);
+    ${API_BASE_URL}/${genre}/${videoId}/similar?api_key=${API_KEY}`);
   const similars = filterVideos(data.results);
 
   return similars;
 };
 
-export const getAllVideos = async () => {
+export const getVideos = async () => {
   const videos: IVideo[] = [];
   const movies = await getMovies();
   const tvShows = await getTvShows();
@@ -205,7 +205,7 @@ export const getMovies = async () => {
   const movies = await Promise.all(
     categories.map(async (category) => {
       const { data } = await axios.get(`
-${BASE_URL}/movie/${category}?api_key=${API_KEY}`);
+${API_BASE_URL}/movie/${category}?api_key=${API_KEY}`);
 
       const results = filterVideos(data.results) as IMovie[];
 
@@ -228,7 +228,7 @@ export const getTvShows = async () => {
   const tvShows = await Promise.all(
     categories.map(async (category) => {
       const { data } = await axios.get(`
-${BASE_URL}/tv/${category}?api_key=${API_KEY}`);
+${API_BASE_URL}/tv/${category}?api_key=${API_KEY}`);
 
       const results = filterVideos(data.results) as ITVShow[];
 
@@ -251,15 +251,46 @@ ${BASE_URL}/tv/${category}?api_key=${API_KEY}`);
 };
 export const getMovieGenres = async () => {
   const { data } = await axios.get(
-    `${BASE_URL}/genre/movie/list?api_key=${API_KEY}`
+    `${API_BASE_URL}/genre/movie/list?api_key=${API_KEY}`
   );
   const genres: IGenre[] = data.genres;
   return genres;
 };
 export const getTvGenres = async () => {
   const { data } = await axios.get(
-    `${BASE_URL}/genre/tv/list?api_key=${API_KEY}`
+    `${API_BASE_URL}/genre/tv/list?api_key=${API_KEY}`
   );
   const genres: IGenre[] = data.genres;
   return genres;
+};
+export const getAllVidoes = async () => {};
+export const getAllMovies = async () => {
+  const movies = await getMovies();
+  const extra = await getExtraMovies();
+  const AllMovies = [extra, ...movies];
+
+  return AllMovies;
+};
+export const getAllTvShows = async () => {
+  const tvShows = await getTvShows();
+  const extra = await getExtraTvShows();
+  const AllTvShows = [extra, ...tvShows];
+  return AllTvShows;
+};
+export const getExtraMovies = async () => {
+  const { data } = await axios.get(
+    `${API_BASE_URL}/trending/movie/day?api_key=${API_KEY}`
+  );
+
+  const results = filterVideos(data.results) as IMovie[];
+
+  return { label: "Today's Top Picks for You", results, genre: 'movie' };
+};
+export const getExtraTvShows = async () => {
+  const { data } = await axios.get(
+    `${API_BASE_URL}/trending/tv/day?api_key=${API_KEY}`
+  );
+  const results = filterVideos(data.results) as ITVShow[];
+
+  return { label: "Today's Top Picks for You", results, genre: 'movie' };
 };

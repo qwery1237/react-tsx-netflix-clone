@@ -150,13 +150,15 @@ export default function Slider({ videos, label, isLastSlider }: ISliderProps) {
 
   const maxIndex = videos.length;
   const displayVideos =
-    firstIndex < lastIndex
+    videos.length <= offset
+      ? videos
+      : firstIndex < lastIndex
       ? videos.slice(firstIndex, firstIndex + offset)
       : [
           ...videos.slice(firstIndex, maxIndex),
           ...videos.slice(0, lastIndex + 1),
         ];
-
+  if (!videos.length) return <></>;
   return (
     <SliderWrapper onMouseEnter={toggleBtn} onMouseLeave={toggleBtn}>
       <SliderTitle>{label}</SliderTitle>
@@ -177,7 +179,7 @@ export default function Slider({ videos, label, isLastSlider }: ISliderProps) {
                 width={width / offset}
                 leaving={leaving}
                 bgImg={makeImgPath(
-                  videos[firstIndex === 0 ? videos.length - 1 : firstIndex - 1]
+                  videos[(firstIndex - 1 + videos.length) % videos.length]
                     .backdrop_path
                 )}
               />
@@ -192,15 +194,15 @@ export default function Slider({ videos, label, isLastSlider }: ISliderProps) {
                 index={i}
               />
             ))}
-            <NextMovie
-              width={width / offset}
-              leaving={leaving}
-              bgImg={makeImgPath(
-                videos[
-                  firstIndex + offset >= videos.length ? 0 : firstIndex + offset
-                ].backdrop_path
-              )}
-            />
+            {offset < videos.length && (
+              <NextMovie
+                width={width / offset}
+                leaving={leaving}
+                bgImg={makeImgPath(
+                  videos[(firstIndex + offset) % videos.length].backdrop_path
+                )}
+              />
+            )}
           </Row>
         </AnimatePresence>
         {showPrev && (
@@ -217,15 +219,17 @@ export default function Slider({ videos, label, isLastSlider }: ISliderProps) {
             {showBtn ? <FaChevronLeft /> : null}
           </SlideBtn>
         )}
-        <SlideBtn
-          textAlign='left'
-          onClick={increaseIndex}
-          onMouseEnter={() => {
-            setSlideDirection('right');
-          }}
-        >
-          {showBtn ? <FaChevronRight /> : null}
-        </SlideBtn>
+        {offset < videos.length && (
+          <SlideBtn
+            textAlign='left'
+            onClick={increaseIndex}
+            onMouseEnter={() => {
+              setSlideDirection('right');
+            }}
+          >
+            {showBtn ? <FaChevronRight /> : null}
+          </SlideBtn>
+        )}
       </SliderAnimationWrapper>
     </SliderWrapper>
   );

@@ -67,15 +67,9 @@ export default function SubHeader() {
     queryFn: getTvGenres,
     enabled: isTvShows && !genreId,
   });
-
   const navAnimation = useAnimation();
-  getMovieGenres();
-  getTvGenres();
-
+  const handleScroll = () => window.scrollTo(0, 0);
   useEffect(() => {
-    window.scrollTo(0, 0);
-    console.log(1);
-
     if (!isHome) {
       setShowThis(true);
       if (genreId) {
@@ -111,6 +105,7 @@ export default function SubHeader() {
         <Wrapper variants={navVariant} animate={navAnimation}>
           <GenreWrapper parentGenreExist={!!genreId}>
             <ParentGenre
+              onClick={handleScroll}
               to={`/react-tsx-netflix-clone/${isMovies ? 'movie' : 'tv'}`}
             >
               {parentGenre}

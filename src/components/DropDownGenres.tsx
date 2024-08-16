@@ -74,9 +74,10 @@ export default function DropDownGenres({ genres }: IProps) {
   const { genreId } = useParams();
   const { scrollY } = useScroll();
   const [showMenu, setShowMenu] = useState(false);
+  const handleScroll = () => window.scrollTo(0, 0);
   useEffect(() => {
     setShowMenu(false);
-  }, [genreId]);
+  }, [pathname]);
   if (!genres) return <></>;
   return (
     <Wrapper>
@@ -91,7 +92,11 @@ export default function DropDownGenres({ genres }: IProps) {
       {!genreId && showMenu ? (
         <Genres>
           {genres.map((genre) => (
-            <Genre to={pathname + '/' + genre.id} key={genre.id}>
+            <Genre
+              onClick={handleScroll}
+              to={pathname + '/' + genre.id}
+              key={genre.id}
+            >
               {genre.name}
             </Genre>
           ))}

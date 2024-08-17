@@ -72,7 +72,7 @@ export default function SimilarVideo({ video }: ISimilarProps) {
   const { genre } = useLocation().state;
   const navigate = useNavigate();
   const onClick = () => {
-    navigate(`../${video.id}`, { state: { genre } });
+    navigate(`.?videoId=${video?.id}`, { state: { genre } });
   };
   return (
     <Card onClick={onClick}>

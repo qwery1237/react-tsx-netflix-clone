@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { useLocation, useParams } from 'react-router-dom';
+import { useLocation, useSearchParams } from 'react-router-dom';
 import styled from 'styled-components';
 import { useEffect, useRef, useState } from 'react';
 import { IoIosArrowDown, IoIosArrowUp } from 'react-icons/io';
@@ -58,7 +58,8 @@ const NoContent = styled.div`
   margin-bottom: 40px;
 `;
 export default function MoreLikeThis() {
-  const { videoId } = useParams();
+  const [searchParams] = useSearchParams();
+  const videoId = searchParams.get('videoId') || '';
   const { genre } = useLocation().state;
 
   const [showMore, setShowMore] = useState(false);

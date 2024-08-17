@@ -1,9 +1,9 @@
 import { AnimatePresence, motion } from 'framer-motion';
-import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
+import { useLocation, useSearchParams } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 import { currentYState } from '../atom';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { getMovieDetail, IMovieDetail, ITvShowDetail } from '../api';
 import { makeImgPath } from '../utils';
@@ -106,10 +106,10 @@ const Title = styled.h1`
   }
 `;
 export default function Preview() {
-  const navigate = useNavigate();
   const currentY = useRecoilValue(currentYState);
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSerchParams] = useSearchParams();
   const videoId = searchParams.get('videoId') || '';
+  const containerRef = useRef<HTMLDivElement>(null);
 
   const { genre } = useLocation().state;
 
@@ -122,7 +122,6 @@ export default function Preview() {
     if (event.currentTarget !== event.target) return;
     setShowModal(false);
   };
-
   useEffect(() => {
     document.body.style.overflow = 'hidden';
     document.documentElement.style.overflow = 'hidden';
@@ -131,11 +130,15 @@ export default function Preview() {
       document.documentElement.style.overflow = 'visible';
     };
   }, []);
-
+  useEffect(() => {
+    if (!containerRef.current) return;
+    containerRef.current.scrollTop = 0;
+  }, [videoId]);
   return (
-    <AnimatePresence onExitComplete={() => navigate(-1)}>
+    <AnimatePresence onExitComplete={() => setSerchParams()}>
       {showModal && detail && (
         <Wrapper
+          ref={containerRef}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}

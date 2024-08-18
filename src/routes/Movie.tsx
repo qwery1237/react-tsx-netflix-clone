@@ -65,7 +65,6 @@ export default function Movie() {
                 : list.results
             }
             label={list.label}
-            genre={list.genre}
             isLastSlider={i === movieLists.length - 1}
           />
         ))}

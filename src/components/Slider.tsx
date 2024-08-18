@@ -6,15 +6,12 @@ import styled from 'styled-components';
 import useScreenSize from '../hooks/useScreenSize';
 import { getOffset } from '../utils';
 import Video from './Video';
-import { MdKeyboardArrowLeft, MdKeyboardArrowRight } from 'react-icons/md';
-import { BsChevronCompactLeft, BsChevronCompactRight } from 'react-icons/bs';
 import { RiArrowLeftWideFill, RiArrowRightWideFill } from 'react-icons/ri';
-import { AnimatePresence } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 
 interface IProps {
   videos: IMovie[] | ITVShow[];
   label: string;
-  genre: string;
   isLastSlider: boolean;
 }
 const Wrapper = styled.div`
@@ -37,10 +34,10 @@ const SliderAnimationWrapper = styled.div<{ height: number }>`
   display: flex;
   justify-content: center;
 `;
-const Row = styled.div<{ boxWidth: number }>`
+const Row = styled(motion.div)<{ boxWidth: number }>`
   display: flex;
   gap: 4px;
-  position: relative;
+  position: absolute;
 `;
 
 const PrevBtn = styled.div<{ height: number; showBtn: boolean }>`
@@ -69,7 +66,29 @@ const NextBtn = styled(PrevBtn)`
   border-bottom-left-radius: 3px;
   left: 96vw;
 `;
-export default function Slider({ videos, label, genre, isLastSlider }: IProps) {
+const slideVariants = {
+  hidden: (direction: string) => {
+    return {
+      x:
+        direction === 'right'
+          ? window.outerWidth * 0.92 - 4
+          : -(window.outerWidth * 0.92 - 4),
+    };
+  },
+  visible: {
+    x: 0,
+  },
+  exit: (direction: string) => {
+    return {
+      x:
+        direction === 'right'
+          ? -(window.outerWidth * 0.92 - 4)
+          : window.outerWidth * 0.92 - 4,
+    };
+  },
+};
+
+export default function Slider({ videos, label, isLastSlider }: IProps) {
   const { width } = useScreenSize();
   const [offset, setOffset] = useState(0);
   const [startIndex, setStartIndex] = useState(0);
@@ -95,13 +114,13 @@ export default function Slider({ videos, label, genre, isLastSlider }: IProps) {
   const toggleLeaving = () => setLeaving((prev) => !prev);
   const increaseIndex = () => {
     !showPrev && setShowPrev(true);
-    // if (leaving) return;
-    // toggleLeaving();
+    if (leaving) return;
+    toggleLeaving();
     setStartIndex((prev) => (prev + offset) % videos.length);
   };
   const decreaseIndex = () => {
-    // if (leaving) return;
-    // toggleLeaving();
+    if (leaving) return;
+    toggleLeaving();
     setStartIndex((prev) => (prev - offset + videos.length) % videos.length);
   };
   useEffect(() => {
@@ -128,12 +147,11 @@ export default function Slider({ videos, label, genre, isLastSlider }: IProps) {
     handleOutletRendered(true);
   }, []);
   useEffect(() => {
+    setLeaving(false);
     const newOffset = getOffset(width);
     offset !== newOffset && setOffset(newOffset);
   }, [width]);
-  useEffect(() => {
-    console.log(displaySlide, offset, hasNext);
-  }, [displaySlide]);
+
   if (!videos.length || !displaySlide || !displaySlide.length) return <></>;
   return (
     <Wrapper onMouseEnter={toggleBtn} onMouseLeave={toggleBtn}>
@@ -143,8 +161,17 @@ export default function Slider({ videos, label, genre, isLastSlider }: IProps) {
         onMouseEnter={toggleShowbtn}
         onMouseLeave={toggleShowbtn}
       >
-        <AnimatePresence onExitComplete={toggleLeaving}>
-          <Row boxWidth={boxWidth}>
+        <AnimatePresence initial={false} onExitComplete={toggleLeaving}>
+          <Row
+            key={displaySlide[0].id}
+            custom={slideDirection}
+            variants={slideVariants}
+            initial='hidden'
+            animate='visible'
+            exit='exit'
+            transition={{ type: 'tween', duration: 0.5 }}
+            boxWidth={boxWidth}
+          >
             <Video
               boxWidth={boxWidth}
               video={
@@ -187,6 +214,9 @@ export default function Slider({ videos, label, genre, isLastSlider }: IProps) {
                 showBtn={showBtn}
                 onClick={decreaseIndex}
                 height={(boxWidth * 6) / 11}
+                onMouseEnter={() => {
+                  setSlideDirection('left');
+                }}
               >
                 <RiArrowLeftWideFill />
               </PrevBtn>
@@ -195,6 +225,9 @@ export default function Slider({ videos, label, genre, isLastSlider }: IProps) {
               showBtn={showBtn}
               onClick={increaseIndex}
               height={(boxWidth * 6) / 11}
+              onMouseEnter={() => {
+                setSlideDirection('right');
+              }}
             >
               <RiArrowRightWideFill />
             </NextBtn>

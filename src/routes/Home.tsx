@@ -35,7 +35,6 @@ export default function Home() {
             key={list.label}
             videos={list.results}
             label={list.label}
-            genre={list.genre}
             isLastSlider={i === videoLists.length - 1}
           />
         ))}

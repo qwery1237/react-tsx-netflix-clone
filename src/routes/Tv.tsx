@@ -66,7 +66,6 @@ export default function Tv() {
                 : list.results
             }
             label={list.label}
-            genre={list.genre}
             isLastSlider={i === tvLists.length - 1}
           />
         ))}

@@ -73,7 +73,9 @@ export default function MoreLikeThis() {
     if (showMore || !containerRef.current) return;
     containerRef.current.scrollIntoView({ block: 'start' });
   }, [showMore]);
-
+  useEffect(() => {
+    setShowMore(false);
+  }, [videoId]);
   return (
     <Wrapper>
       <Label>More Like This</Label>

@@ -666,6 +666,7 @@ ${Ai}/tv/${n}?api_key=${Pi}`),i=Wl(r.results);return n==="top_rated"?{label:`${J
   color:${e=>e.theme.white.darker};
   line-height: 1.2;
   background-color: ${e=>e.theme.black.veryDark};
+  overflow-x:hidden;
   }
   body::-webkit-scrollbar {
     width: 0;

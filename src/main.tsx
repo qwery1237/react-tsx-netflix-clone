@@ -46,6 +46,7 @@ const GlobalStyles = createGlobalStyle`
   color:${(props) => props.theme.white.darker};
   line-height: 1.2;
   background-color: ${(props) => props.theme.black.veryDark};
+  overflow-x:hidden;
   }
   body::-webkit-scrollbar {
     width: 0;

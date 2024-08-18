@@ -4,8 +4,10 @@ import { useEffect, useState } from 'react';
 import Banner from '../components/Banner';
 import styled from 'styled-components';
 import Slider from '../components/Slider';
-import { useParams, useSearchParams } from 'react-router-dom';
+import { useOutletContext, useParams, useSearchParams } from 'react-router-dom';
 import Preview from '../components/Preview';
+import { IOutletContext } from '../App';
+import NoContent from '../components/NoContent';
 const Wrapper = styled.div`
   padding-top: 68px;
 `;
@@ -18,7 +20,9 @@ export default function Movie() {
     queryFn: getAllMovies,
   });
   const { genreId } = useParams();
+  const { handleOutletRendered } = useOutletContext<IOutletContext>();
   const [bannerMovie, setBannerMovie] = useState<IMovie | null>(null);
+  const [noContent, setNoContent] = useState(false);
   const [searchParams] = useSearchParams();
   const showPreview = !!searchParams.get('videoId');
 
@@ -42,13 +46,15 @@ export default function Movie() {
       .filter((list) => list);
     if (filtered.length === 0) {
       setBannerMovie(null);
+      setNoContent(true);
+      handleOutletRendered(true);
       return;
     }
 
     const newBanner = filtered[0]?.results[0] || null;
     setBannerMovie(newBanner);
   }, [genreId, isLoading]);
-
+  if (noContent) return <NoContent />;
   if (isLoading || !bannerMovie) return <></>;
   return (
     <Wrapper>

@@ -4,8 +4,10 @@ import { useEffect, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import Banner from '../components/Banner';
 import Slider from '../components/Slider';
-import { useParams, useSearchParams } from 'react-router-dom';
+import { useOutletContext, useParams, useSearchParams } from 'react-router-dom';
 import Preview from '../components/Preview';
+import { IOutletContext } from '../App';
+import NoContent from '../components/NoContent';
 
 const Wrapper = styled.div`
   padding-top: 68px;
@@ -14,12 +16,14 @@ const ListWrapper = styled.div`
   margin-bottom: -4vw;
 `;
 export default function Tv() {
-  const { genreId } = useParams();
   const { data: tvLists, isLoading } = useQuery({
     queryKey: ['videos', 'tvShow'],
     queryFn: getAllTvShows,
   });
+  const { genreId } = useParams();
+  const { handleOutletRendered } = useOutletContext<IOutletContext>();
   const [bannerTvShow, setBannerTvShow] = useState<ITVShow | null>(null);
+  const [noContent, setNoContent] = useState(false);
   const [searchParams] = useSearchParams();
   const showPreview = !!searchParams.get('videoId');
 
@@ -43,13 +47,15 @@ export default function Tv() {
       .filter((list) => list);
     if (filtered.length === 0) {
       setBannerTvShow(null);
+      setNoContent(true);
+      handleOutletRendered(true);
       return;
     }
 
     const newBanner = filtered[0]?.results[0] || null;
     setBannerTvShow(newBanner);
   }, [genreId, isLoading]);
-
+  if (noContent) return <NoContent />;
   if (isLoading || !bannerTvShow) return <></>;
   return (
     <Wrapper>

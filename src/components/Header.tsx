@@ -69,7 +69,7 @@ export default function Header({ handleOutletRendered }: IProps) {
   const currentY = useRecoilValue(currentYState);
   const navAnimation = useAnimation();
   const location = useLocation();
-  const homeMatch = useMatch('/react-tsx-netflix-clone/') !== null;
+  const homeMatch = useMatch('/') !== null;
 
   useEffect(() => {
     if (currentY > 0) {
@@ -84,7 +84,7 @@ export default function Header({ handleOutletRendered }: IProps) {
   return (
     <Nav variants={navVariant} animate={navAnimation} initial='top'>
       <Logo
-        to={BASE_URL}
+        to={BASE_URL + '/'}
         onClick={() => handleOutletRendered(homeMatch ? true : false)}
       >
         <LogoSVG />

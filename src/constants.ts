@@ -1,1 +1,1 @@
-export const BASE_URL = '/react-tsx-netflix-clone/';
+export const BASE_URL = '/';

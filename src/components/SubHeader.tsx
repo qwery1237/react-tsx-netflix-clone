@@ -72,7 +72,7 @@ export default function SubHeader({ handleOutletRendered }: IProps) {
   const navAnimation = useAnimation();
   const handleClick = () => {
     handleOutletRendered(false);
-    navigate(`/react-tsx-netflix-clone/${isMovies ? 'movie' : 'tv'}`);
+    navigate(`/${isMovies ? 'movie' : 'tv'}`);
     window.location.reload();
   };
   useEffect(() => {

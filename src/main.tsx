@@ -31,6 +31,7 @@ const router = createBrowserRouter([
     ],
   },
 ]);
+
 const client = new QueryClient();
 const GlobalStyles = createGlobalStyle`
   * {

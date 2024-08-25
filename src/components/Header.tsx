@@ -1,5 +1,5 @@
 import { motion, useAnimation } from 'framer-motion';
-import { Link, useLocation, useMatch } from 'react-router-dom';
+import { Link, useLocation, useMatch, useSearchParams } from 'react-router-dom';
 import styled from 'styled-components';
 import LogoSVG from './LogoSVG';
 import { FiSearch } from 'react-icons/fi';
@@ -10,6 +10,7 @@ import useScreenSize from '../hooks/useScreenSize';
 import NavLinks from './NavLinks';
 import DropDownNav from './DropDownNav';
 import { BASE_URL } from '../constants';
+import SearchBar from './SearchBar';
 interface IProps {
   handleOutletRendered: (isRendered: boolean) => void;
 }
@@ -40,19 +41,7 @@ const Search = styled.form`
     stroke-width: 2;
   }
 `;
-const SearchBar = styled(motion.div)`
-  background-color: rgba(20, 20, 20, 1);
-  border: solid 1px white;
-  display: flex;
-  width: 250px;
-  max-width: 92vw;
-  height: 30px;
-  align-items: center;
-  padding: 0 4px;
-  gap: 12px;
-  transform-origin: right center;
-`;
-const Input = styled.input``;
+
 const Btn = styled(motion.button)`
   display: flex;
   align-items: center;
@@ -70,6 +59,8 @@ export default function Header({ handleOutletRendered }: IProps) {
   const navAnimation = useAnimation();
   const location = useLocation();
   const homeMatch = useMatch('/') !== null;
+  const [searchParams] = useSearchParams();
+  const searchKey = searchParams.get('searchKey');
 
   useEffect(() => {
     if (currentY > 0) {
@@ -80,32 +71,28 @@ export default function Header({ handleOutletRendered }: IProps) {
   }, [currentY, location]);
 
   const openSearchBar = () => setSearchActive(true);
-  const closeSearchBar = () => setSearchActive(false);
+  const closeSearchBar = () => !searchKey && setSearchActive(false);
+  const handlePageLeave = (shouldRerender?: boolean) => {
+    handleOutletRendered(!shouldRerender);
+
+    searchActive && setSearchActive(false);
+  };
   return (
     <Nav variants={navVariant} animate={navAnimation} initial='top'>
       <Logo
         to={BASE_URL + '/'}
-        onClick={() => handleOutletRendered(homeMatch ? true : false)}
+        onClick={() => handlePageLeave(homeMatch ? false : true)}
       >
         <LogoSVG />
       </Logo>
       {width > 500 ? (
-        <NavLinks handleOutletRendered={handleOutletRendered} />
+        <NavLinks handlePageLeave={handlePageLeave} />
       ) : (
-        <DropDownNav handleOutletRendered={handleOutletRendered} />
+        <DropDownNav handlePageLeave={handlePageLeave} />
       )}
       <Search>
         {searchActive ? (
-          <SearchBar initial={{ scaleX: 0 }} animate={{ scaleX: 1 }}>
-            <Btn layoutId='search'>
-              <FiSearch />
-            </Btn>
-            <Input
-              autoFocus
-              onBlur={closeSearchBar}
-              placeholder='Titles,people,genres'
-            />
-          </SearchBar>
+          <SearchBar closeSearchBar={closeSearchBar} />
         ) : (
           <Btn
             style={{ cursor: 'pointer' }}

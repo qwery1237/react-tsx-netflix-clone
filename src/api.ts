@@ -263,7 +263,6 @@ export const getTvGenres = async () => {
   const genres: IGenre[] = data.genres;
   return genres;
 };
-export const getAllVidoes = async () => {};
 export const getAllMovies = async () => {
   const movies = await getMovies();
   const extra = await getExtraMovies();
@@ -294,3 +293,13 @@ export const getExtraTvShows = async () => {
 
   return { label: "Today's Top Picks for You", results, genre: 'movie' };
 };
+export const getVideosByKeyword = async (keyword: string) => {
+  if (!keyword) return [];
+
+  const { data } = await axios.get(
+    `${API_BASE_URL}/search/keyword?query=${keyword}&page=1&api_key=${API_KEY}`
+  );
+  console.log(data);
+  return [];
+};
+export const getMoreVideos = async (crrPage: number) => {};

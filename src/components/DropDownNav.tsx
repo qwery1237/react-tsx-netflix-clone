@@ -4,7 +4,7 @@ import { Link, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 import { BASE_URL } from '../constants';
 interface IProps {
-  handleOutletRendered: (isRendered: boolean) => void;
+  handlePageLeave: (shouldRerender: boolean) => void;
 }
 interface IShowMenuProps {
   mouseOnTrigger: boolean;
@@ -60,7 +60,7 @@ const NavItem = styled(Link)<{ urlMatch?: boolean }>`
     background-color: rgba(0, 0, 0, 0.8);
   }
 `;
-export default function DropDownNav({ handleOutletRendered }: IProps) {
+export default function DropDownNav({ handlePageLeave }: IProps) {
   const [showMenu, setShowMenu] = useState<IShowMenuProps>({
     mouseOnTrigger: false,
     mouseOnMenu: false,
@@ -100,7 +100,7 @@ export default function DropDownNav({ handleOutletRendered }: IProps) {
       300
     );
   };
-  const handleRendered = () => handleOutletRendered(false);
+
   useEffect(() => {
     setShowMenu({
       mouseOnMenu: false,
@@ -125,18 +125,22 @@ export default function DropDownNav({ handleOutletRendered }: IProps) {
           <NavArrow>
             <IoCaretUpOutline />
           </NavArrow>
-          <NavItem onClick={handleRendered} to={BASE_URL} urlMatch={homeMatch}>
+          <NavItem
+            onClick={() => handlePageLeave(true)}
+            to={BASE_URL}
+            urlMatch={homeMatch}
+          >
             Home
           </NavItem>
           <NavItem
-            onClick={handleRendered}
+            onClick={() => handlePageLeave(true)}
             to={BASE_URL + 'tv'}
             urlMatch={tvMatch}
           >
             TV Shows
           </NavItem>
           <NavItem
-            onClick={handleRendered}
+            onClick={() => handlePageLeave(true)}
             to={BASE_URL + 'movie'}
             urlMatch={movieMatch}
           >

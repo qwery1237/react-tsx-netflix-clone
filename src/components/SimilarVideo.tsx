@@ -11,7 +11,9 @@ const Card = styled.div`
   background-color: ${(props) => props.theme.black.lighter};
   border-radius: 6px;
   overflow: hidden;
-  cursor: pointer;
+  * {
+    cursor: pointer;
+  }
 `;
 const MovieImg = styled.div<{ bgImg: string }>`
   background-image: ${(props) => `url(${props.bgImg})`};

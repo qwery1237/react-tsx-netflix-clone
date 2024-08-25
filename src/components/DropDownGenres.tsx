@@ -1,7 +1,7 @@
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { IGenre } from '../api';
 import styled from 'styled-components';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { IoCaretDownOutline } from 'react-icons/io5';
 import { useScroll } from 'framer-motion';
 
@@ -37,10 +37,13 @@ const Trigger = styled.div<{ scrollY: number }>`
     font-size: 3.2vw;
   }
 `;
-const Text = styled.div``;
+const Text = styled.div`
+  cursor: pointer;
+`;
 const Icon = styled.div`
   display: flex;
   align-items: center;
+  cursor: pointer;
 `;
 const Genres = styled.div`
   width: 450px;
@@ -80,19 +83,45 @@ export default function DropDownGenres({
   const { genreId } = useParams();
   const { scrollY } = useScroll();
   const [showMenu, setShowMenu] = useState(false);
+
+  const triggerRef = useRef<HTMLDivElement>(null);
+  const menuRef = useRef<HTMLDivElement>(null);
+
   const handleClick = (genreId: number) => {
     handleOutletRendered(false);
     navigate(pathname + '/' + genreId);
     window.location.reload();
   };
+  const closeMenu = (event: MouseEvent) => {
+    if (!triggerRef.current || !menuRef.current) return;
+
+    if (
+      triggerRef.current.contains(event.target as Node) ||
+      menuRef.current.contains(event.target as Node)
+    )
+      return;
+    setShowMenu(false);
+  };
+
   useEffect(() => {
     setShowMenu(false);
   }, [pathname]);
+  useEffect(() => {
+    if (showMenu) {
+      window.addEventListener('click', closeMenu);
+      return () => window.removeEventListener('click', closeMenu);
+    }
+  }, [showMenu]);
+
   if (!genres) return <></>;
   return (
     <Wrapper>
       {!genreId ? (
-        <Trigger scrollY={scrollY.get()} onClick={() => setShowMenu(true)}>
+        <Trigger
+          ref={triggerRef}
+          scrollY={scrollY.get()}
+          onClick={() => setShowMenu(true)}
+        >
           <Text>Genres</Text>
           <Icon>
             <IoCaretDownOutline />
@@ -100,7 +129,7 @@ export default function DropDownGenres({
         </Trigger>
       ) : null}
       {!genreId && showMenu ? (
-        <Genres>
+        <Genres ref={menuRef}>
           {genres.map((genre) => (
             <Genre onClick={() => handleClick(genre.id)} key={genre.id}>
               {genre.name}

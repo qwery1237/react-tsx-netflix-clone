@@ -127,7 +127,7 @@ export default function DropDownNav({ handlePageLeave }: IProps) {
           </NavArrow>
           <NavItem
             onClick={() => handlePageLeave(true)}
-            to={BASE_URL}
+            to={BASE_URL + '/'}
             urlMatch={homeMatch}
           >
             Home

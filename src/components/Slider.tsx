@@ -14,12 +14,12 @@ interface IProps {
   label: string;
   isLastSlider: boolean;
 }
-const Wrapper = styled.div`
+const Wrapper = styled(motion.div)<{ zIndex: number }>`
   width: 100%;
   height: fit-content;
   margin-bottom: 3vw;
   position: relative;
-  z-index: 1;
+  z-index: ${(props) => props.zIndex};
   top: -14vw;
 `;
 const Label = styled.h3`
@@ -28,7 +28,7 @@ const Label = styled.h3`
   font-weight: 500;
   padding: ${(props) => props.theme.paddingContainer};
 `;
-const SliderAnimationWrapper = styled.div<{ height: number }>`
+const SliderAnimationWrapper = styled(motion.div)<{ height: number }>`
   width: 100%;
   height: ${(props) => props.height + 'px'};
   display: flex;
@@ -92,6 +92,7 @@ export default function Slider({ videos, label, isLastSlider }: IProps) {
   const { width } = useScreenSize();
   const [offset, setOffset] = useState(0);
   const [startIndex, setStartIndex] = useState(0);
+  const [zIndex, setZIndex] = useState(1);
   const [showPrev, setShowPrev] = useState(false);
   const [showBtn, setShowBtn] = useState(false);
   const [slideDirection, setSlideDirection] = useState('right');
@@ -105,11 +106,7 @@ export default function Slider({ videos, label, isLastSlider }: IProps) {
   const remainingSpace = hasNext
     ? 0
     : offset - (displaySlide as IMovie[] | ITVShow[])?.length;
-  const toggleBtn = (event: React.MouseEvent<HTMLDivElement>) => {
-    event.currentTarget.style.zIndex === '2'
-      ? (event.currentTarget.style.zIndex = '1')
-      : (event.currentTarget.style.zIndex = '2');
-  };
+
   const toggleShowbtn = () => setShowBtn((prev) => !prev);
   const toggleLeaving = () => setLeaving((prev) => !prev);
   const increaseIndex = () => {
@@ -154,12 +151,16 @@ export default function Slider({ videos, label, isLastSlider }: IProps) {
 
   if (!videos.length || !displaySlide || !displaySlide.length) return <></>;
   return (
-    <Wrapper onMouseEnter={toggleBtn} onMouseLeave={toggleBtn}>
+    <Wrapper
+      onHoverStart={() => setZIndex(2)}
+      onHoverEnd={() => setZIndex(1)}
+      zIndex={zIndex}
+    >
       <Label>{label}</Label>
       <SliderAnimationWrapper
         height={(boxWidth * 6) / 11}
-        onMouseEnter={toggleShowbtn}
-        onMouseLeave={toggleShowbtn}
+        onHoverStart={toggleShowbtn}
+        onHoverEnd={toggleShowbtn}
       >
         <AnimatePresence initial={false} onExitComplete={toggleLeaving}>
           <Row

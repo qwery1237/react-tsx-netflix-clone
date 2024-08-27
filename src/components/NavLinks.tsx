@@ -32,7 +32,7 @@ export default function NavLinks({ handlePageLeave }: IProps) {
   return (
     <Wrapper>
       <Item urlMatch={homeMatch}>
-        <Link onClick={() => handlePageLeave(true)} to={BASE_URL}>
+        <Link onClick={() => handlePageLeave(true)} to={BASE_URL + '/'}>
           Home
         </Link>
       </Item>

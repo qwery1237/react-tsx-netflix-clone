@@ -1,9 +1,13 @@
-import axios from 'axios';
+import axios, { AxiosResponse } from 'axios';
 import { capitalizeLabel, filterVideos } from './utils';
 
 const API_KEY = 'a467db69048c41114e360cf1b32a063f';
 const API_BASE_URL = 'https://api.themoviedb.org/3';
 
+export interface ISearchResult {
+  id: number;
+  name: string;
+}
 export interface IGenre {
   id: number;
   name: string;
@@ -294,12 +298,60 @@ export const getExtraTvShows = async () => {
   return { label: "Today's Top Picks for You", results, genre: 'movie' };
 };
 export const getVideosByKeyword = async (keyword: string) => {
+  let pageIndex = 1;
   if (!keyword) return [];
 
   const { data } = await axios.get(
     `${API_BASE_URL}/search/keyword?query=${keyword}&page=1&api_key=${API_KEY}`
   );
-  console.log(data);
-  return [];
+
+  const totalPages = data.total_pages;
+  let filteredVideos = await convertSearchData(data);
+
+  while (pageIndex < totalPages && filteredVideos.length < 20) {
+    pageIndex++;
+    const extra = await getNextPage(keyword, pageIndex);
+    filteredVideos = [...filteredVideos, ...extra];
+  }
+  return filteredVideos;
 };
-export const getMoreVideos = async (crrPage: number) => {};
+export const getNextPage = async (keyword: string, pageIndex: number) => {
+  const { data } = await axios.get(
+    `${API_BASE_URL}/search/keyword?query=${keyword}&page=${pageIndex}&api_key=${API_KEY}`
+  );
+  const filteredVideos = await convertSearchData(data);
+  return filteredVideos;
+};
+export const getVideoById = async (id: number) => {
+  try {
+    const { data } = await axios.get<IMovieDetail>(
+      `${API_BASE_URL}/movie/${id}?api_key=${API_KEY}`
+    );
+
+    return data;
+  } catch (error) {
+    try {
+      const { data } = await axios.get<ITvShowDetail>(
+        `${API_BASE_URL}/tv/${id}?api_key=${API_KEY}`
+      );
+      return data;
+    } catch (error) {
+      return;
+    }
+  }
+};
+export const convertSearchData = async (data: { results: ISearchResult[] }) => {
+  const results: ISearchResult[] = data.results;
+
+  const videos = await Promise.all(
+    results
+      .map((result) => getVideoById(result.id))
+      .filter((video) => video !== undefined)
+  );
+
+  const filteredVideos = filterVideos(
+    videos.filter((video) => video !== undefined)
+  );
+  return filteredVideos;
+};
+export const getMoreVideos = async () => {};

@@ -46,6 +46,8 @@ const GlobalStyles = createGlobalStyle`
   }
 
   body {
+    position: absolute;
+    top: 0;
   width: 100vw;
   min-height: 100vh;
   font-weight: 300;

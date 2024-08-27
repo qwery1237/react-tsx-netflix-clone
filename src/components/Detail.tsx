@@ -44,15 +44,22 @@ export default function Detail({ detail }: IDetailProps) {
   return (
     <Wapper>
       <MetaData>
-        <Rating>{detail.vote_average.toFixed(1)}/10</Rating>
+        <Rating>
+          {detail.vote_average % 10
+            ? detail.vote_average.toFixed(1)
+            : detail.vote_average}
+          /10
+        </Rating>
         <MetaSecondLine>
           <ReleasedAt>
             {(detail as IMovieDetail).release_date?.slice(0, 4) ||
               (detail as ITvShowDetail).first_air_date?.slice(0, 4)}
           </ReleasedAt>
           <Runtime>
-            {convertTime((detail as IMovieDetail).runtime) ||
-              getSeasonsOrEpisodes(detail as ITvShowDetail)}
+            {(detail as IMovieDetail).runtime === 0
+              ? ''
+              : convertTime((detail as IMovieDetail).runtime) ||
+                getSeasonsOrEpisodes(detail as ITvShowDetail)}
           </Runtime>
         </MetaSecondLine>
       </MetaData>

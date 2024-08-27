@@ -2,7 +2,7 @@ import styled from 'styled-components';
 import { IMovie, ITVShow } from '../api';
 import { makeImgPath } from '../utils';
 import { SiNetflix } from 'react-icons/si';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 
 interface ISimilarProps {
   video: IMovie | ITVShow;
@@ -73,12 +73,20 @@ const Overview = styled.div`
 export default function SimilarVideo({ video }: ISimilarProps) {
   const { genre } = useLocation().state;
   const navigate = useNavigate();
+  const { pathname } = useLocation();
+  const [searchParams] = useSearchParams();
+  const searchKey = searchParams.get('searchKey');
   const onClick = () => {
-    navigate(`.?videoId=${video?.id}`, { state: { genre } });
+    navigate(
+      `${pathname === '/' ? pathname + '/' : pathname}?${
+        searchKey ? `searchKey=${searchKey}&` : ''
+      }videoId=${video?.id}`,
+      { state: { genre } }
+    );
   };
   return (
     <Card onClick={onClick}>
-      <MovieImg bgImg={makeImgPath(video.backdrop_path)}>
+      <MovieImg bgImg={makeImgPath(video.backdrop_path || video.poster_path)}>
         <Logo>
           <SiNetflix />
         </Logo>
@@ -86,7 +94,12 @@ export default function SimilarVideo({ video }: ISimilarProps) {
       </MovieImg>
       <Detail>
         <MetaData>
-          <Rating>{video.vote_average.toFixed(1)}/10</Rating>
+          <Rating>
+            {video.vote_average % 10
+              ? video.vote_average.toFixed(1)
+              : video.vote_average}
+            /10
+          </Rating>
           <Year>
             {(video as IMovie).release_date?.slice(0, 4) ||
               (video as ITVShow).first_air_date?.slice(0, 4)}

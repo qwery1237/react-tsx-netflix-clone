@@ -65,7 +65,9 @@ export default function Banner({ banner }: IProps) {
   }
 
   return (
-    <BannerWrapper bgImg={makeImgPath(banner.backdrop_path)}>
+    <BannerWrapper
+      bgImg={makeImgPath(banner.backdrop_path || banner.poster_path)}
+    >
       <TitleWrapper
         variants={titleVariants}
         initial='initial'

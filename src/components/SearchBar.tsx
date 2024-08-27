@@ -28,17 +28,17 @@ export default function SearchBar({ closeSearchBar }: IProps) {
   const { register, watch } = useForm();
   const [_, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
-  const location = useLocation();
+  const { pathname } = useLocation();
   const searchKey = watch('search');
-  const previousLocation = useRef(location.pathname);
+  const previousLocation = useRef(pathname === '/' ? pathname + '/' : pathname);
 
   useEffect(() => {
     if (!searchKey) {
       navigate(previousLocation.current);
       return;
     }
-    if (!location.pathname.includes('/search')) {
-      previousLocation.current = location.pathname;
+    if (!pathname.includes('/search')) {
+      previousLocation.current = pathname === '/' ? pathname + '/' : pathname;
 
       navigate('/search');
     }

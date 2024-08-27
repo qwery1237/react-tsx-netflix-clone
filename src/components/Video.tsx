@@ -1,14 +1,14 @@
 import styled from 'styled-components';
-import { IMovie, ITVShow } from '../api';
+import { IMovie, IMovieDetail, ITVShow, ITvShowDetail } from '../api';
 import { makeImgPath } from '../utils';
 import { MdKeyboardArrowDown } from 'react-icons/md';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import { useRef } from 'react';
 import { motion } from 'framer-motion';
 
 interface Iprops {
   boxWidth: number;
-  video?: IMovie | ITVShow;
+  video?: IMovie | ITVShow | IMovieDetail | ITvShowDetail;
   pointerEventExist?: boolean;
   contentExist?: boolean;
   index?: number;
@@ -27,7 +27,8 @@ const Box = styled(motion.div)<IBoxProps>`
   ${(props) => (props.pointerEventExist ? '' : 'pointer-events: none;')}
   ${(props) => (props.contentExist ? '' : 'opacity:0;')}
   ${(props) => {
-    switch (props.index) {
+    if (!props.offset || (props.index !== 0 && !props.index)) return '';
+    switch (props.index % props.offset) {
       case 0:
         return 'transform-origin: center left;';
       case props.offset && props.offset - 1:
@@ -124,15 +125,25 @@ export default function Video({
   const navigate = useNavigate();
   const videoRef = useRef<HTMLDivElement>(null);
   const { pathname } = useLocation();
+  const [searchParams] = useSearchParams();
+  const searchKey = searchParams.get('searchKey');
+
   const onClick = async () => {
-    navigate(String(`${pathname}?videoId=${video?.id}`), {
-      state: { genre: (video as IMovie).title ? 'movie' : 'tv' },
-    });
+    navigate(
+      String(
+        `${pathname === '/' ? pathname + '/' : pathname}?${
+          searchKey ? `searchKey=${searchKey}&` : ''
+        }videoId=${video?.id}`
+      ),
+      {
+        state: { genre: (video as IMovie).title ? 'movie' : 'tv' },
+      }
+    );
   };
 
   return (
     <>
-      {contentExist ? (
+      {contentExist && video ? (
         <Box
           ref={videoRef}
           boxWidth={boxWidth}
@@ -147,7 +158,7 @@ export default function Video({
           <VideoImg
             variants={imgVariants}
             transition={{ type: 'tween', duration: 0.2 }}
-            bgImg={makeImgPath(video?.backdrop_path || '')}
+            bgImg={makeImgPath(video.backdrop_path || video.poster_path)}
           />
           <Info
             variants={infoVariants}
@@ -158,7 +169,12 @@ export default function Video({
                 <MdKeyboardArrowDown />
               </Btn>
             </BtnWrapper>
-            <Rating>{video?.vote_average.toFixed(1)}/10</Rating>
+            <Rating>
+              {video.vote_average % 10
+                ? video.vote_average.toFixed(1)
+                : video.vote_average}
+              /10
+            </Rating>
             <Title>{(video as IMovie).title || (video as ITVShow).name}</Title>
           </Info>
         </Box>

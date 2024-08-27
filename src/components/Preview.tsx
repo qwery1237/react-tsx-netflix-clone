@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from 'framer-motion';
-import { useLocation, useSearchParams } from 'react-router-dom';
+import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 import { currentYState } from '../atom';
@@ -106,9 +106,12 @@ const Title = styled.h1`
   }
 `;
 export default function Preview() {
+  const { pathname } = useLocation();
+  const navigate = useNavigate();
   const currentY = useRecoilValue(currentYState);
-  const [searchParams, setSerchParams] = useSearchParams();
+  const [searchParams] = useSearchParams();
   const videoId = searchParams.get('videoId') || '';
+  const searchKey = searchParams.get('searchKey');
   const containerRef = useRef<HTMLDivElement>(null);
 
   const { genre } = useLocation().state;
@@ -122,6 +125,7 @@ export default function Preview() {
     if (event.currentTarget !== event.target) return;
     setShowModal(false);
   };
+
   useEffect(() => {
     document.body.style.overflow = 'hidden';
     document.documentElement.style.overflow = 'hidden';
@@ -135,7 +139,17 @@ export default function Preview() {
     containerRef.current.scrollTop = 0;
   }, [videoId]);
   return (
-    <AnimatePresence onExitComplete={() => setSerchParams()}>
+    <AnimatePresence
+      onExitComplete={() =>
+        navigate(
+          pathname === '/'
+            ? pathname + '/'
+            : searchKey
+            ? pathname + `?searchKey=${searchKey}`
+            : pathname
+        )
+      }
+    >
       {showModal && detail && (
         <Wrapper
           ref={containerRef}
@@ -152,7 +166,9 @@ export default function Preview() {
             exit={{ scale: 0 }}
             transition={{ type: 'tween', duration: 0.2 }}
           >
-            <MovieImg bgImg={makeImgPath(detail.backdrop_path)}>
+            <MovieImg
+              bgImg={makeImgPath(detail.backdrop_path || detail.poster_path)}
+            >
               <CloseIcon
                 onClick={() => {
                   setShowModal(false);

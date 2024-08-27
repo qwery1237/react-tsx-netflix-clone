@@ -1,4 +1,4 @@
-import { IMovie, ITVShow, ITvShowDetail } from './api';
+import { IMovie, ITVShow, ITvShowDetail, IMovieDetail } from './api';
 
 export const makeImgPath = (id: string, format?: string) =>
   `https://image.tmdb.org/t/p/${format ? format : 'original'}/${id}`;
@@ -36,10 +36,13 @@ export const capitalizeLabel = (label: string) => {
     .join(' ');
   return capitalized;
 };
-export const filterVideos = (videos: IMovie[] | ITVShow[]) => {
+export const filterVideos = (
+  videos: IMovie[] | ITVShow[] | (IMovieDetail | ITvShowDetail)[]
+) => {
   return videos.filter(
     (video) =>
-      video.backdrop_path !== null && video.overview && video.vote_count
+      (video.backdrop_path !== null || video.poster_path !== null) &&
+      video.overview
   );
 };
 export const getSlicedVideos = (

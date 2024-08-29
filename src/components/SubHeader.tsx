@@ -20,6 +20,9 @@ const Wrapper = styled(motion.div)`
   height: 68px;
   z-index: 3;
   padding: ${(props) => props.theme.paddingContainer};
+  @media (max-width: 800px) {
+    height: 8.5vw;
+  }
 `;
 const GenreWrapper = styled.div<{ parentGenreExist: boolean }>`
   display: flex;
@@ -27,9 +30,9 @@ const GenreWrapper = styled.div<{ parentGenreExist: boolean }>`
   color: #808080;
   ${(props) => (props.parentGenreExist ? '  gap: 8px;' : '')}
   margin-right: 24px;
-  @media (max-width: 500px) {
-    font-size: 3.85vw;
-    margin-right: 4.8vw;
+  @media (max-width: 800px) {
+    font-size: 2vw;
+    margin-right: 3vw;
   }
 `;
 const ParentGenre = styled.div`
@@ -38,8 +41,8 @@ const ParentGenre = styled.div`
 const Genre = styled.div`
   color: ${(props) => props.theme.white.lighter};
   font-size: 38px;
-  @media (max-width: 500px) {
-    font-size: 7.7vw;
+  @media (max-width: 800px) {
+    font-size: 4.75vw; // 38.5px
   }
 `;
 const navVariant = {

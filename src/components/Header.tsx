@@ -13,6 +13,7 @@ import { BASE_URL } from '../constants';
 import SearchBar from './SearchBar';
 interface IProps {
   handleOutletRendered: (isRendered: boolean) => void;
+  isOutletRendered: boolean;
 }
 const Nav = styled(motion.nav)`
   width: 100%;
@@ -52,7 +53,10 @@ const navVariant = {
   },
   scroll: { backgroundColor: 'rgba(20,20,20,1)' },
 };
-export default function Header({ handleOutletRendered }: IProps) {
+export default function Header({
+  handleOutletRendered,
+  isOutletRendered,
+}: IProps) {
   const { width } = useScreenSize();
   const [searchActive, setSearchActive] = useState(false);
   const currentY = useRecoilValue(currentYState);
@@ -92,7 +96,11 @@ export default function Header({ handleOutletRendered }: IProps) {
       )}
       <Search>
         {searchActive ? (
-          <SearchBar closeSearchBar={closeSearchBar} />
+          <SearchBar
+            isOutletRendered={isOutletRendered}
+            handleOutletRendered={handleOutletRendered}
+            closeSearchBar={closeSearchBar}
+          />
         ) : (
           <Btn
             style={{ cursor: 'pointer' }}

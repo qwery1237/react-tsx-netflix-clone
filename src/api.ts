@@ -1,9 +1,19 @@
-import axios, { AxiosResponse } from 'axios';
+import axios from 'axios';
 import { capitalizeLabel, filterVideos } from './utils';
 
 const API_KEY = 'a467db69048c41114e360cf1b32a063f';
 const API_BASE_URL = 'https://api.themoviedb.org/3';
-
+export type VideoType = (IMovie | ITVShow | IMovieDetail | ITvShowDetail)[];
+export interface IDataProps {
+  videos: VideoType;
+  totalPages: number;
+  lastPage: number;
+}
+export interface ISearchResults {
+  videos: VideoType;
+  nextPage: number;
+  totalPages: number;
+}
 export interface ISearchResult {
   id: number;
   name: string;
@@ -297,30 +307,62 @@ export const getExtraTvShows = async () => {
 
   return { label: "Today's Top Picks for You", results, genre: 'movie' };
 };
-export const getVideosByKeyword = async (keyword: string) => {
-  let pageIndex = 1;
-  if (!keyword) return [];
-
-  const { data } = await axios.get(
-    `${API_BASE_URL}/search/keyword?query=${keyword}&page=1&api_key=${API_KEY}`
-  );
-
-  const totalPages = data.total_pages;
-  let filteredVideos = await convertSearchData(data);
-
-  while (pageIndex < totalPages && filteredVideos.length < 20) {
-    pageIndex++;
-    const extra = await getNextPage(keyword, pageIndex);
-    filteredVideos = [...filteredVideos, ...extra];
+export const getSearchResults = async ({
+  pageParam = 1,
+  keyword,
+}: {
+  pageParam: number;
+  keyword: string;
+}) => {
+  let pageIndex = pageParam;
+  let allVideos: VideoType = [];
+  const firstData = await getNextPage(keyword, pageIndex);
+  allVideos = [...firstData.videos];
+  if (pageParam === 1) {
+    while (pageIndex < firstData.totalPages && allVideos.length < 36) {
+      pageIndex++;
+      const extra = await getNextPage(keyword, pageIndex);
+      allVideos = [...allVideos, ...extra.videos];
+    }
+  } else {
+    while (pageIndex < firstData.totalPages && allVideos.length < 20) {
+      pageIndex++;
+      const extra = await getNextPage(keyword, pageIndex);
+      allVideos = [...allVideos, ...extra.videos];
+    }
   }
-  return filteredVideos;
+  const result: ISearchResults = {
+    videos: allVideos,
+    nextPage: pageIndex + 1,
+    totalPages: firstData.totalPages,
+  };
+  return result;
 };
+// export const getVideosByKeyword = async (
+//   keyword: string
+// ): Promise<IDataProps> => {
+//   let pageIndex = 1;
+
+//   const { data } = await axios.get(
+//     `${API_BASE_URL}/search/keyword?query=${keyword}&page=1&api_key=${API_KEY}`
+//   );
+
+//   const totalPages = data.total_pages;
+//   let filteredVideos = await convertSearchData(data);
+
+//   while (pageIndex < totalPages && filteredVideos.length < 36) {
+//     pageIndex++;
+//     const extra = await getNextPage(keyword, pageIndex);
+//     filteredVideos = [...filteredVideos, ...extra.videos];
+//   }
+//   return { videos: filteredVideos, totalPages, lastPage: pageIndex };
+// };
 export const getNextPage = async (keyword: string, pageIndex: number) => {
   const { data } = await axios.get(
     `${API_BASE_URL}/search/keyword?query=${keyword}&page=${pageIndex}&api_key=${API_KEY}`
   );
   const filteredVideos = await convertSearchData(data);
-  return filteredVideos;
+  return { videos: filteredVideos, totalPages: data.total_pages };
 };
 export const getVideoById = async (id: number) => {
   try {
@@ -354,4 +396,18 @@ export const convertSearchData = async (data: { results: ISearchResult[] }) => {
   );
   return filteredVideos;
 };
-export const getMoreVideos = async () => {};
+// export const getMoreSearchResults = async (
+//   keyword: string,
+//   startIndex: number,
+//   totalPages: number
+// ) => {
+//   let pageIndex = startIndex;
+//   let videos: VideoType = [];
+//   while (pageIndex <= totalPages && videos.length < 20) {
+//     const extra = await getNextPage(keyword, pageIndex);
+//     videos = [...videos, ...extra];
+//     pageIndex++;
+//   }
+
+//   return { newVideos: videos, nextPage: pageIndex };
+// };

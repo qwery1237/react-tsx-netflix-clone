@@ -13,7 +13,15 @@ const Wrapper = styled.div`
   padding-top: 68px;
 `;
 const ListWrapper = styled.div`
-  margin-bottom: -4vw;
+  @media (max-width: 1200px) {
+    margin-bottom: 10vw;
+  }
+  @media (max-width: 800px) {
+    margin-bottom: 20vw;
+  }
+  @media (max-width: 500px) {
+    margin-bottom: 30vw;
+  }
 `;
 export default function Tv() {
   const { data: tvLists, isLoading } = useQuery({

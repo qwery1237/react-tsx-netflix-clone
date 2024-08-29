@@ -8,7 +8,7 @@ interface IProps {
 }
 const BannerWrapper = styled.div<{ bgImg: string }>`
   width: 100vw;
-  height: 56.25vw;
+  height: 52.25vw;
   padding: ${(props) => props.theme.paddingContainer};
   background-image: linear-gradient(
       to bottom,
@@ -28,7 +28,7 @@ const TitleWrapper = styled(motion.div)`
   transform-origin: bottom left;
 `;
 const TitleLogo = styled.div`
-  font-size: 2vw;
+  font-size: 1.5vw;
   letter-spacing: 0.5vw;
   font-weight: 500;
   display: flex;
@@ -42,8 +42,8 @@ const TitleLogo = styled.div`
   }
 `;
 const Title = styled.h1`
-  max-width: 600px;
-  font-size: 5vw;
+  max-width: 50vw;
+  font-size: 4vw;
   font-weight: 500;
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
 `;
@@ -53,7 +53,7 @@ const Overview = styled(motion.p)`
 `;
 const titleVariants = {
   initial: { scale: 1 },
-  animate: { scale: 0.5, transition: { delay: 4, duration: 0.3 } },
+  animate: { scale: 0.7, transition: { delay: 4, duration: 0.3 } },
 };
 const overviewVariants = {
   initial: { opacity: 1, y: 0 },

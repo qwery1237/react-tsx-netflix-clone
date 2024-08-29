@@ -6,6 +6,8 @@ import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import styled from 'styled-components';
 interface IProps {
   closeSearchBar: () => void;
+  handleOutletRendered: (isRendered: boolean) => void;
+  isOutletRendered: boolean;
 }
 const Wrapper = styled(motion.div)`
   background-color: rgba(20, 20, 20, 1);
@@ -24,8 +26,12 @@ const Btn = styled(motion.button)`
   display: flex;
   align-items: center;
 `;
-export default function SearchBar({ closeSearchBar }: IProps) {
-  const { register, watch } = useForm();
+export default function SearchBar({
+  closeSearchBar,
+  handleOutletRendered,
+  isOutletRendered,
+}: IProps) {
+  const { register, watch, setFocus } = useForm();
   const [_, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
   const { pathname } = useLocation();
@@ -35,6 +41,7 @@ export default function SearchBar({ closeSearchBar }: IProps) {
   useEffect(() => {
     if (!searchKey) {
       navigate(previousLocation.current);
+
       return;
     }
     if (!pathname.includes('/search')) {
@@ -42,8 +49,13 @@ export default function SearchBar({ closeSearchBar }: IProps) {
 
       navigate('/search');
     }
+    handleOutletRendered(false);
     setSearchParams({ searchKey });
   }, [searchKey]);
+  useEffect(() => {
+    if (!isOutletRendered) return;
+    setFocus('search');
+  }, [isOutletRendered]);
   return (
     <Wrapper initial={{ scaleX: 0 }} animate={{ scaleX: 1 }}>
       <Btn layoutId='search'>

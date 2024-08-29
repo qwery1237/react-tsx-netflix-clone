@@ -30,11 +30,11 @@ const Trigger = styled.div<{ scrollY: number }>`
         ? 'background-color:transparent;'
         : 'background-color:rgba(43,43,43,1);'}
   }
-  @media (max-width: 500px) {
-    width: 24vw;
-    height: 6vw;
-    padding: 0 2.4vw;
-    font-size: 3.2vw;
+  @media (max-width: 800px) {
+    width: 15vw;
+    height: 3.75vw;
+    padding: 0 1.5vw;
+    font-size: 2vw;
   }
 `;
 const Text = styled.div`

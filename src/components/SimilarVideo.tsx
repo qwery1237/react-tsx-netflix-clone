@@ -1,11 +1,11 @@
 import styled from 'styled-components';
-import { IMovie, ITVShow } from '../api';
+import { IMovie, IMovieDetail, ITVShow, ITvShowDetail } from '../api';
 import { makeImgPath } from '../utils';
 import { SiNetflix } from 'react-icons/si';
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 
 interface ISimilarProps {
-  video: IMovie | ITVShow;
+  video: IMovie | ITVShow | IMovieDetail | ITvShowDetail;
 }
 const Card = styled.div`
   background-color: ${(props) => props.theme.black.lighter};

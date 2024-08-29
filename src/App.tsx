@@ -39,11 +39,10 @@ function App() {
         handleOutletRendered={handleOutletRendered}
       />
       <SubHeader handleOutletRendered={handleOutletRendered} />
-      <MainLoader />
-      {/* {isOutletRendered ? null : <MainLoader />}
+      {isOutletRendered ? null : <MainLoader />}
       <OutletWrapper isOutletRendered={isOutletRendered}>
         <Outlet context={{ handleOutletRendered, setHideFooter }} />
-      </OutletWrapper> */}
+      </OutletWrapper>
       {hideFooter ? null : <Footer />}
     </>
   );

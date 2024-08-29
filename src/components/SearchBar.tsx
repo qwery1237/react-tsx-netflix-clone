@@ -31,8 +31,8 @@ export default function SearchBar({
   handleOutletRendered,
   isOutletRendered,
 }: IProps) {
-  const { register, watch, setFocus } = useForm();
-  const [_, setSearchParams] = useSearchParams();
+  const { register, watch, setFocus, setValue } = useForm();
+  const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
   const { pathname } = useLocation();
   const searchKey = watch('search');
@@ -55,6 +55,10 @@ export default function SearchBar({
   useEffect(() => {
     if (!isOutletRendered) return;
     setFocus('search');
+    const initialSearchKey = searchParams.get('searchKey');
+    if (initialSearchKey) {
+      setValue('search', initialSearchKey);
+    }
   }, [isOutletRendered]);
   return (
     <Wrapper initial={{ scaleX: 0 }} animate={{ scaleX: 1 }}>

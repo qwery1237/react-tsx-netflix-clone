@@ -89,7 +89,7 @@ export default function Header({
       >
         <LogoSVG />
       </Logo>
-      {width > 500 ? (
+      {width > 640 ? (
         <NavLinks handlePageLeave={handlePageLeave} />
       ) : (
         <DropDownNav handlePageLeave={handlePageLeave} />

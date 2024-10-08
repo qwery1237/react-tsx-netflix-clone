@@ -8,6 +8,8 @@ import { useOutletContext, useParams, useSearchParams } from 'react-router-dom';
 import Preview from '../components/Preview';
 import { IOutletContext } from '../App';
 import NoContent from '../components/NoContent';
+import { useSetRecoilState } from 'recoil';
+import { titleState } from '../atom';
 const Wrapper = styled.div`
   padding-top: 68px;
 `;
@@ -32,7 +34,9 @@ export default function Movie() {
   const [bannerMovie, setBannerMovie] = useState<IMovie | null>(null);
   const [noContent, setNoContent] = useState(false);
   const [searchParams] = useSearchParams();
-  const showPreview = !!searchParams.get('videoId');
+  const videoId = searchParams.get('videoId');
+  const [showPreview, setShowPreview] = useState(false);
+  const setTitle = useSetRecoilState(titleState);
 
   useEffect(() => {
     if (!movieLists) return;
@@ -62,6 +66,14 @@ export default function Movie() {
     const newBanner = filtered[0]?.results[0] || null;
     setBannerMovie(newBanner);
   }, [genreId, isLoading]);
+  useEffect(() => {
+    if (!videoId) {
+      setShowPreview(false);
+      !genreId && setTitle('Movies - ');
+      return;
+    }
+    setShowPreview(true);
+  }, [videoId]);
   if (noContent) return <NoContent />;
   if (isLoading || !bannerMovie) return <></>;
   return (
@@ -83,7 +95,7 @@ export default function Movie() {
           />
         ))}
       </ListWrapper>
-      {showPreview && <Preview />}
+      {showPreview && <Preview setShowPreview={setShowPreview} />}
     </Wrapper>
   );
 }

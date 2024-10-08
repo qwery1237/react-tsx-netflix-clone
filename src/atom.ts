@@ -10,3 +10,7 @@ export const currentYState = atom({
   key: 'currentY',
   default: 0,
 });
+export const titleState = atom({
+  key: 'title',
+  default: '',
+});

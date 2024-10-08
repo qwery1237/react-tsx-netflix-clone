@@ -1,8 +1,8 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
-import { useRecoilValue } from 'recoil';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 import styled from 'styled-components';
-import { currentYState } from '../atom';
+import { currentYState, titleState } from '../atom';
 import { useEffect, useRef, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { getMovieDetail, IMovieDetail, ITvShowDetail } from '../api';
@@ -12,6 +12,9 @@ import { SiNetflix } from 'react-icons/si';
 import Detail from './Detail';
 import MoreLikeThis from './MoreLikeThis';
 import AboutThis from './AboutThis';
+interface IPreviewProps {
+  setShowPreview: (showPreview: boolean) => void;
+}
 const Wrapper = styled(motion.div)<{ top: number }>`
   position: absolute;
   top: ${(props) => props.top + 'px'};
@@ -105,30 +108,33 @@ const Title = styled.h1`
     font-size: 4vw;
   }
 `;
-export default function Preview() {
+export default function Preview({ setShowPreview }: IPreviewProps) {
   const { pathname } = useLocation();
   const navigate = useNavigate();
   const currentY = useRecoilValue(currentYState);
-  const [searchParams] = useSearchParams();
+  const [showModal, setShowModal] = useState(true);
+  const [searchParams, setSearchParams] = useSearchParams();
   const videoId = searchParams.get('videoId') || '';
   const searchKey = searchParams.get('searchKey');
   const containerRef = useRef<HTMLDivElement>(null);
-
+  const setTitle = useSetRecoilState(titleState);
   const { genre } = useLocation().state;
 
   const { data: detail } = useQuery({
     queryKey: ['videoDetail', videoId],
     queryFn: () => getMovieDetail(videoId, genre),
   });
-  const [showModal, setShowModal] = useState(true);
+
   const hideContent = (event: React.MouseEvent<HTMLDivElement>) => {
     if (event.currentTarget !== event.target) return;
+
     setShowModal(false);
   };
 
   useEffect(() => {
     document.body.style.overflow = 'hidden';
     document.documentElement.style.overflow = 'hidden';
+
     return () => {
       document.body.style.overflow = 'visible';
       document.documentElement.style.overflow = 'visible';
@@ -138,17 +144,28 @@ export default function Preview() {
     if (!containerRef.current) return;
     containerRef.current.scrollTop = 0;
   }, [videoId]);
+  useEffect(() => {
+    if (!detail) return;
+    setTitle(
+      ((detail as IMovieDetail).title || (detail as ITvShowDetail).name) + ' - '
+    );
+    return () => {
+      setTitle('');
+    };
+  }, [detail]);
   return (
     <AnimatePresence
-      onExitComplete={() =>
+      onExitComplete={() => {
+        setSearchParams({});
         navigate(
           pathname === '/'
             ? pathname + '/'
             : searchKey
             ? pathname + `?searchKey=${searchKey}`
             : pathname
-        )
-      }
+        );
+        setShowPreview(false);
+      }}
     >
       {showModal && detail && (
         <Wrapper
@@ -169,11 +186,7 @@ export default function Preview() {
             <MovieImg
               bgImg={makeImgPath(detail.backdrop_path || detail.poster_path)}
             >
-              <CloseIcon
-                onClick={() => {
-                  setShowModal(false);
-                }}
-              >
+              <CloseIcon onClick={() => setShowModal(false)}>
                 <IoCloseOutline />
               </CloseIcon>
               <TitleWrapper>

@@ -1,9 +1,11 @@
 import { motion } from 'framer-motion';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { FiSearch } from 'react-icons/fi';
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
+import { useRecoilState } from 'recoil';
 import styled from 'styled-components';
+import { titleState } from '../atom';
 interface IProps {
   closeSearchBar: () => void;
   handleOutletRendered: (isRendered: boolean) => void;
@@ -33,6 +35,8 @@ export default function SearchBar({
 }: IProps) {
   const { register, watch, setFocus, setValue } = useForm();
   const [searchParams, setSearchParams] = useSearchParams();
+  const [title, setTitle] = useRecoilState(titleState);
+  const [prevTitle, setPrevTitle] = useState('');
   const navigate = useNavigate();
   const { pathname } = useLocation();
   const searchKey = watch('search');
@@ -40,13 +44,16 @@ export default function SearchBar({
 
   useEffect(() => {
     if (!searchKey) {
+      prevTitle && setTitle(prevTitle);
+      console.log(prevTitle);
+
       navigate(previousLocation.current);
 
       return;
     }
     if (!pathname.includes('/search')) {
       previousLocation.current = pathname === '/' ? pathname + '/' : pathname;
-
+      setPrevTitle(title);
       navigate('/search');
     }
     handleOutletRendered(false);

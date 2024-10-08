@@ -35,7 +35,6 @@ export default function MainLoader() {
   const offset = getOffset(width);
   const loader = Array(offset).fill(1);
   const boxWidth = (width * 0.92 - 4 * (offset + 1)) / offset;
-  console.log(loader);
 
   return (
     <Wrapper>

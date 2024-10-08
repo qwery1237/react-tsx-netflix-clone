@@ -7,6 +7,8 @@ import { useQuery } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import Preview from '../components/Preview';
+import { useSetRecoilState } from 'recoil';
+import { titleState } from '../atom';
 
 const ListWrapper = styled.div`
   @media (max-width: 1200px) {
@@ -26,13 +28,23 @@ export default function Home() {
   });
   const [bannerMovie, setBannerMovie] = useState<IMovie | null>(null);
   const [searchParams] = useSearchParams();
-  const showPreview = !!searchParams.get('videoId');
+  const videoId = searchParams.get('videoId');
+  const [showPreview, setShowPreview] = useState(false);
+  const setTitle = useSetRecoilState(titleState);
+
   useEffect(() => {
     if (!videoLists) return;
 
     setBannerMovie(videoLists[0].results[0] as IMovie);
   }, [isLoading]);
-
+  useEffect(() => {
+    if (!videoId) {
+      setShowPreview(false);
+      setTitle('Home - ');
+      return;
+    }
+    setShowPreview(true);
+  }, [videoId]);
   if (isLoading || !bannerMovie) return <></>;
   return (
     <>
@@ -47,7 +59,7 @@ export default function Home() {
           />
         ))}
       </ListWrapper>
-      {showPreview && <Preview />}
+      {showPreview && <Preview setShowPreview={setShowPreview} />}
     </>
   );
 }

@@ -1,8 +1,13 @@
 import { useEffect, useState } from 'react';
-import { useLocation, useNavigate, useParams } from 'react-router-dom';
-import { useRecoilValue } from 'recoil';
+import {
+  useLocation,
+  useNavigate,
+  useParams,
+  useSearchParams,
+} from 'react-router-dom';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 import styled from 'styled-components';
-import { currentYState } from '../atom';
+import { currentYState, titleState } from '../atom';
 import { motion, useAnimation } from 'framer-motion';
 import { getMovieGenres, getTvGenres } from '../api';
 import { useQuery } from '@tanstack/react-query';
@@ -62,6 +67,9 @@ export default function SubHeader({ handleOutletRendered }: IProps) {
   const isMovies = pathname.includes('movie');
   const isTvShows = pathname.includes('tv');
   const isHome = !isMovies && !isTvShows;
+  const setTitle = useSetRecoilState(titleState);
+  const [searchParams] = useSearchParams();
+  const videoId = searchParams.get('videoId');
   const { data: movieGenres, isLoading: movieGenreLoading } = useQuery({
     queryKey: ['genres', 'movie'],
     queryFn: getMovieGenres,
@@ -109,6 +117,11 @@ export default function SubHeader({ handleOutletRendered }: IProps) {
       navAnimation.start('top');
     }
   }, [currentY]);
+  useEffect(() => {
+    if (parentGenre) {
+      setTitle(`${genre} ${parentGenre} - `);
+    }
+  }, [genre, parentGenre, videoId]);
   return (
     <>
       {showThis ? (

@@ -11,6 +11,8 @@ import { motion } from 'framer-motion';
 import Preview from '../components/Preview';
 import { useEffect, useState } from 'react';
 import SubLoader from '../components/SubLoader';
+import { titleState } from '../atom';
+import { useSetRecoilState } from 'recoil';
 
 const Wrapper = styled(motion.div)<{ offset: number }>`
   display: grid;
@@ -48,7 +50,9 @@ export default function Search() {
   const boxWidth = (width * 0.92 - 4 * (offset + 1)) / offset;
   const [searchParams] = useSearchParams();
   const searchKey = searchParams.get('searchKey');
-  const showPreview = !!searchParams.get('videoId');
+  const videoId = searchParams.get('videoId');
+  const [showPreview, setShowPreview] = useState(false);
+  const setTitle = useSetRecoilState(titleState);
 
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } =
     useInfiniteQuery<ISearchResults>({
@@ -101,7 +105,14 @@ export default function Search() {
     }
     setVideos((prev) => [...prev, ...data.pages[data.pages.length - 1].videos]);
   }, [data]);
-
+  useEffect(() => {
+    if (!videoId) {
+      setShowPreview(false);
+      setTitle('');
+      return;
+    }
+    setShowPreview(true);
+  }, [videoId]);
   if (isLoading) return <></>;
   return (
     <>
@@ -125,7 +136,7 @@ export default function Search() {
           {isFetchingNextPage && <SubLoader />}
         </Wrapper>
       )}
-      {showPreview && <Preview />}
+      {showPreview && <Preview setShowPreview={setShowPreview} />}
     </>
   );
 }

@@ -8,6 +8,8 @@ import { useOutletContext, useParams, useSearchParams } from 'react-router-dom';
 import Preview from '../components/Preview';
 import { IOutletContext } from '../App';
 import NoContent from '../components/NoContent';
+import { useSetRecoilState } from 'recoil';
+import { titleState } from '../atom';
 
 const Wrapper = styled.div`
   padding-top: 68px;
@@ -33,7 +35,9 @@ export default function Tv() {
   const [bannerTvShow, setBannerTvShow] = useState<ITVShow | null>(null);
   const [noContent, setNoContent] = useState(false);
   const [searchParams] = useSearchParams();
-  const showPreview = !!searchParams.get('videoId');
+  const videoId = searchParams.get('videoId');
+  const [showPreview, setShowPreview] = useState(false);
+  const setTitle = useSetRecoilState(titleState);
 
   useEffect(() => {
     if (!tvLists) return;
@@ -63,6 +67,14 @@ export default function Tv() {
     const newBanner = filtered[0]?.results[0] || null;
     setBannerTvShow(newBanner);
   }, [genreId, isLoading]);
+  useEffect(() => {
+    if (!videoId) {
+      setShowPreview(false);
+      !genreId && setTitle('TV Shows - ');
+      return;
+    }
+    setShowPreview(true);
+  }, [videoId]);
   if (noContent) return <NoContent />;
   if (isLoading || !bannerTvShow) return <></>;
   return (
@@ -84,7 +96,7 @@ export default function Tv() {
           />
         ))}
       </ListWrapper>
-      {showPreview && <Preview />}
+      {showPreview && <Preview setShowPreview={setShowPreview} />}
     </Wrapper>
   );
 }

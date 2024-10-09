@@ -1,5 +1,4 @@
 import { SiGithub, SiLinkedin } from 'react-icons/si';
-import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 
 const Wrapper = styled.div`
@@ -32,12 +31,12 @@ export default function Footer() {
   return (
     <Wrapper>
       <Socials>
-        <Link to={'https://github.com/qwery1237'}>
+        <a href={'https://github.com/qwery1237'} target='_blank'>
           <SiGithub />
-        </Link>
-        <Link to={'https://www.linkedin.com/in/jinsooson/'}>
+        </a>
+        <a href={'https://www.linkedin.com/in/jinsooson/'} target='_blank'>
           <SiLinkedin />
-        </Link>
+        </a>
       </Socials>
       <Info>
         <Email>jinsu4768@gmail.com</Email>

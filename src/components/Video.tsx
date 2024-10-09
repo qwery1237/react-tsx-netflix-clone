@@ -23,7 +23,6 @@ interface IBoxProps {
 }
 const Box = styled(motion.div)<IBoxProps>`
   width: ${(props) => props.boxWidth + 'px'};
-  cursor: pointer;
   ${(props) => (props.pointerEventExist ? '' : 'pointer-events: none;')}
   ${(props) => (props.contentExist ? '' : 'opacity:0;')}
   ${(props) => {
@@ -38,6 +37,9 @@ const Box = styled(motion.div)<IBoxProps>`
   height: fit-content;
   overflow: hidden;
   border-radius: 3px;
+  & * {
+    cursor: pointer;
+  }
 `;
 const VideoImg = styled(motion.div)<{ bgImg?: string }>`
   width: 100%;
@@ -154,6 +156,7 @@ export default function Video({
           transition={{ type: 'tween', duration: 0.2 }}
           index={index}
           offset={offset}
+          onClick={onClick}
         >
           <VideoImg
             variants={imgVariants}

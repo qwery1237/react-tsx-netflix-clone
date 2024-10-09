@@ -804,7 +804,8 @@ object-assign
   color:${e=>e.theme.white.darker};
   line-height: 1.2;
   background-color: ${e=>e.theme.black.veryDark};
-  overflow-x:hidden;
+  overflow-x:hidden !important;
+  touch-action:none;
   }
   body::-webkit-scrollbar {
     width: 0;

@@ -805,7 +805,7 @@ object-assign
   line-height: 1.2;
   background-color: ${e=>e.theme.black.veryDark};
   overflow-x:hidden !important;
-  touch-action:none;
+  touch-action:pan-y;
   }
   body::-webkit-scrollbar {
     width: 0;

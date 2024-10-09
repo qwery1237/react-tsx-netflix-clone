@@ -18,13 +18,13 @@ const OutletWrapper = styled.div<{ isOutletRendered: boolean }>`
   ${(props) => (props.isOutletRendered ? '' : 'display:none;')}
 `;
 function App() {
-  console.warn = () => {};
   const { scrollY } = useScroll();
   const setCurrentY = useSetRecoilState(currentYState);
   const [isOutletRendered, setIsOutletRendered] = useState(false);
   const [hideFooter, setHideFooter] = useState(false);
   const title = useRecoilValue(titleState);
   const { pathname } = useLocation();
+  const viewportMeta = document.querySelector('meta[name="viewport"]');
 
   useMotionValueEvent(scrollY, 'change', (crrY) => {
     setCurrentY(crrY);
@@ -35,7 +35,13 @@ function App() {
   useEffect(() => {
     setHideFooter(false);
   }, [pathname]);
-
+  useEffect(() => {
+    if (!viewportMeta) return;
+    viewportMeta.setAttribute(
+      'content',
+      'width=device-width, initial-scale=1, minimum-scale=1'
+    );
+  }, [viewportMeta]);
   return (
     <>
       <Helmet>

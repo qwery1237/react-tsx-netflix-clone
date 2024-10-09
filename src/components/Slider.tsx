@@ -4,7 +4,7 @@ import { useOutletContext } from 'react-router-dom';
 import { IOutletContext } from '../App';
 import styled from 'styled-components';
 import useScreenSize from '../hooks/useScreenSize';
-import { getOffset } from '../utils';
+import { getOffset, isMobileDevice } from '../utils';
 import Video from './Video';
 import { RiArrowLeftWideFill, RiArrowRightWideFill } from 'react-icons/ri';
 import { AnimatePresence, motion } from 'framer-motion';
@@ -14,13 +14,17 @@ interface IProps {
   label: string;
   isLastSlider: boolean;
 }
-const Wrapper = styled(motion.div)<{ zIndex: number }>`
+interface IWrapperProps {
+  zIndex: number;
+  top?: number;
+}
+const Wrapper = styled(motion.div)<IWrapperProps>`
   width: 100%;
   height: fit-content;
   margin-bottom: 3vw;
   position: relative;
   z-index: ${(props) => props.zIndex};
-  top: -14vw;
+  top: ${(props) => (props.top ? props.top + 'px' : '-14vw')};
 `;
 const Label = styled.h3`
   margin-bottom: 2vw;
@@ -34,7 +38,7 @@ const SliderAnimationWrapper = styled(motion.div)<{ height: number }>`
   display: flex;
   justify-content: center;
 `;
-const Row = styled(motion.div)<{ boxWidth: number }>`
+const Row = styled(motion.div)`
   display: flex;
   gap: 4px;
   position: absolute;
@@ -100,13 +104,15 @@ export default function Slider({ videos, label, isLastSlider }: IProps) {
   const [displaySlide, setDisplaySlide] = useState<null | (IMovie | ITVShow)[]>(
     null
   );
+  const [mobileBoxWidth, setMobileBoxWidth] = useState(0);
+  const [mobileTop, setMobileTop] = useState(0);
   const { handleOutletRendered } = useOutletContext<IOutletContext>();
   const hasNext = videos.length > offset;
   const boxWidth = (width * 0.92 - 4 * (offset + 1)) / offset;
   const remainingSpace = hasNext
     ? 0
     : offset - (displaySlide as IMovie[] | ITVShow[])?.length;
-
+  const isMobile = isMobileDevice();
   const toggleShowbtn = () => setShowBtn((prev) => !prev);
   const toggleLeaving = () => setLeaving((prev) => !prev);
   const increaseIndex = () => {
@@ -144,21 +150,31 @@ export default function Slider({ videos, label, isLastSlider }: IProps) {
     handleOutletRendered(true);
   }, []);
   useEffect(() => {
+    if (isMobile) return;
     setLeaving(false);
     const newOffset = getOffset(width);
     offset !== newOffset && setOffset(newOffset);
   }, [width]);
-
+  useEffect(() => {
+    if (!isMobile) return;
+    !offset && setOffset(getOffset(width));
+  }, [isMobile]);
+  useEffect(() => {
+    if (!isMobile || offset === 0) return;
+    setMobileTop(-((width / 100) * 14));
+    setMobileBoxWidth(boxWidth);
+  }, [offset]);
   if (!videos.length || !displaySlide || !displaySlide.length) return <></>;
   return (
     <Wrapper
       onHoverStart={() => setZIndex(2)}
       onHoverEnd={() => setZIndex(1)}
       zIndex={zIndex}
+      top={isMobile ? mobileTop : undefined}
     >
       <Label>{label}</Label>
       <SliderAnimationWrapper
-        height={(boxWidth * 6) / 11}
+        height={((isMobile ? mobileBoxWidth : boxWidth) * 6) / 11}
         onHoverStart={toggleShowbtn}
         onHoverEnd={toggleShowbtn}
       >
@@ -171,10 +187,9 @@ export default function Slider({ videos, label, isLastSlider }: IProps) {
             animate='visible'
             exit='exit'
             transition={{ type: 'tween', duration: 0.5 }}
-            boxWidth={boxWidth}
           >
             <Video
-              boxWidth={boxWidth}
+              boxWidth={isMobile ? mobileBoxWidth : boxWidth}
               video={
                 hasNext
                   ? videos[(startIndex - 1 + videos.length) % videos.length]
@@ -184,7 +199,7 @@ export default function Slider({ videos, label, isLastSlider }: IProps) {
             />
             {displaySlide.map((video, i) => (
               <Video
-                boxWidth={boxWidth}
+                boxWidth={isMobile ? mobileBoxWidth : boxWidth}
                 video={video}
                 pointerEventExist
                 contentExist
@@ -198,7 +213,7 @@ export default function Slider({ videos, label, isLastSlider }: IProps) {
                 ))
               : null}
             <Video
-              boxWidth={boxWidth}
+              boxWidth={isMobile ? mobileBoxWidth : boxWidth}
               video={
                 hasNext
                   ? videos[(startIndex + offset) % videos.length]
@@ -214,7 +229,7 @@ export default function Slider({ videos, label, isLastSlider }: IProps) {
               <PrevBtn
                 showBtn={showBtn}
                 onClick={decreaseIndex}
-                height={(boxWidth * 6) / 11}
+                height={((isMobile ? mobileBoxWidth : boxWidth) * 6) / 11}
                 onMouseEnter={() => {
                   setSlideDirection('left');
                 }}
@@ -225,7 +240,7 @@ export default function Slider({ videos, label, isLastSlider }: IProps) {
             <NextBtn
               showBtn={showBtn}
               onClick={increaseIndex}
-              height={(boxWidth * 6) / 11}
+              height={((isMobile ? mobileBoxWidth : boxWidth) * 6) / 11}
               onMouseEnter={() => {
                 setSlideDirection('right');
               }}

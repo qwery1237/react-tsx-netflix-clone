@@ -3,7 +3,7 @@ import { IOutletContext } from '../App';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { getSearchResults, ISearchResults, VideoType } from '../api';
 import styled from 'styled-components';
-import { getOffset } from '../utils';
+import { getOffset, isMobileDevice } from '../utils';
 import useScreenSize from '../hooks/useScreenSize';
 import NoContent from '../components/NoContent';
 import Video from '../components/Video';
@@ -46,13 +46,15 @@ export default function Search() {
   const { handleOutletRendered, setHideFooter } =
     useOutletContext<IOutletContext>();
   const { width } = useScreenSize();
-  const offset = getOffset(width);
+  const [offset, setOffset] = useState(0);
   const boxWidth = (width * 0.92 - 4 * (offset + 1)) / offset;
   const [searchParams] = useSearchParams();
   const searchKey = searchParams.get('searchKey');
   const videoId = searchParams.get('videoId');
   const [showPreview, setShowPreview] = useState(false);
   const setTitle = useSetRecoilState(titleState);
+  const isMobile = isMobileDevice();
+  const [mobileBoxWidth, setMobileBoxWidth] = useState(0);
 
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } =
     useInfiniteQuery<ISearchResults>({
@@ -113,6 +115,19 @@ export default function Search() {
     }
     setShowPreview(true);
   }, [videoId]);
+  useEffect(() => {
+    if (isMobile) return;
+    const newOffset = getOffset(width);
+    offset !== newOffset && setOffset(newOffset);
+  }, [width]);
+  useEffect(() => {
+    if (!isMobile) return;
+    !offset && setOffset(getOffset(width));
+  }, [isMobile]);
+  useEffect(() => {
+    if (!isMobile || offset === 0) return;
+    setMobileBoxWidth(boxWidth);
+  }, [offset]);
   if (isLoading) return <></>;
   return (
     <>
@@ -124,7 +139,7 @@ export default function Search() {
             <VideoWrapper>
               <Video
                 key={video.id}
-                boxWidth={boxWidth}
+                boxWidth={isMobile ? mobileBoxWidth : boxWidth}
                 video={video}
                 pointerEventExist
                 contentExist

@@ -55,10 +55,29 @@ export const getSlicedVideos = (
     const first = videos.slice(startIndex);
     const last = videos.slice(0, startIndex + offset - videos.length);
     const sliced = [...first, ...last];
-    console.log(sliced);
 
     return sliced;
   }
   const sliced = videos.slice(startIndex, startIndex + offset);
   return sliced;
+};
+export const isMobileDevice = () => {
+  return /Mobi|Android/i.test(navigator.userAgent);
+};
+export const preventFocus = (shouldPrevent: boolean) => {
+  if (!isMobileDevice()) return;
+  const viewportMeta = document.querySelector('meta[name="viewport"]');
+  if (viewportMeta) {
+    if (shouldPrevent) {
+      viewportMeta.setAttribute(
+        'content',
+        'width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no'
+      );
+      return;
+    }
+    viewportMeta.setAttribute(
+      'content',
+      'width=device-width, initial-scale=1, minimum-scale=1'
+    );
+  }
 };

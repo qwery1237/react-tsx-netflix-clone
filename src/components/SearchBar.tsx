@@ -45,7 +45,6 @@ export default function SearchBar({
   useEffect(() => {
     if (!searchKey) {
       prevTitle && setTitle(prevTitle);
-      console.log(prevTitle);
 
       navigate(previousLocation.current);
 
@@ -67,6 +66,7 @@ export default function SearchBar({
       setValue('search', initialSearchKey);
     }
   }, [isOutletRendered]);
+
   return (
     <Wrapper initial={{ scaleX: 0 }} animate={{ scaleX: 1 }}>
       <Btn layoutId='search'>

@@ -11,6 +11,7 @@ import NavLinks from './NavLinks';
 import DropDownNav from './DropDownNav';
 import { BASE_URL } from '../constants';
 import SearchBar from './SearchBar';
+import { preventFocus } from '../utils';
 interface IProps {
   handleOutletRendered: (isRendered: boolean) => void;
   isOutletRendered: boolean;
@@ -74,8 +75,15 @@ export default function Header({
     }
   }, [currentY, location]);
 
-  const openSearchBar = () => setSearchActive(true);
-  const closeSearchBar = () => !searchKey && setSearchActive(false);
+  const openSearchBar = () => {
+    preventFocus(true);
+    setSearchActive(true);
+  };
+  const closeSearchBar = () => {
+    if (searchKey) return;
+    preventFocus(false);
+    setSearchActive(false);
+  };
   const handlePageLeave = (shouldRerender?: boolean) => {
     handleOutletRendered(!shouldRerender);
 

@@ -55,7 +55,7 @@ const GlobalStyles = createGlobalStyle`
   line-height: 1.2;
   background-color: ${(props) => props.theme.black.veryDark};
   overflow-x:hidden !important;
-  touch-action:pan-y;
+  touch-action:pan-y pinch-zoom;
   }
   body::-webkit-scrollbar {
     width: 0;

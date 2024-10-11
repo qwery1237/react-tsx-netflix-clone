@@ -1,9 +1,18 @@
 # Flix Spot
 
-### Netflix Clone
-
 Flix Spot is a Netflix clone app designed to replicate the UI and smooth animations of Netflix. This project allowed me to focus on TypeScript and animation techniques to create a seamless user experience.
 
+## Table of Contents
+- [Motivation](#motivation)
+- [Challenges I Faced](#challenges-i-faced)
+  - [Slider Animation](#slider-animation)
+  - [Modal for Video Details](#modal-for-video-details)
+  - [Mobile Responsiveness and Zoom Issues](#mobile-responsiveness-and-zoom-issues)
+- [What I Learned](#what-i-learned)
+- [Tech Stack & Tools](#tech-stack--tools)
+- [Key Features](#key-features)
+- [Portfolio & GitHub Page](#portfolio--github-page)
+- 
 ## Motivation
 
 I wanted to enhance my skills in TypeScript and animation, so I chose to build a Netflix clone. Netflix’s animations are smooth and visually appealing, and I wanted to challenge myself to implement similar animations in my project.

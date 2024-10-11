@@ -33,7 +33,7 @@ One challenge I faced was handling the modal pop-up for video details, as the AP
 
 On mobile devices, I noticed that users often zoom in and out, which was detected as a resize event. This caused issues with the video box sizes, as the slider recalculated the box dimensions each time. To fix this, I created a utility function to detect mobile devices and prevent resizing on zoom. I created a separate box size specifically for mobile devices and ensured that the number of displayed boxes remained fixed. On resize, if the device was detected as mobile, the function would immediately return without recalculating the box size or number of boxes, preventing any changes in the layout for mobile users.
 
-Additionally, I prevented unnecessary interactions outside of the required elements, like touch or keyboard navigation, and disabled zooming out below 100%, which helped maintain the layout and hide unwanted elements.
+Additionally, I prevented unnecessary scrolling outside of the required elements, like touch or keyboard arrow key scrolling, and disabled zooming out below 100%, which helped maintain the layout and hide unwanted elements.
 
 ## What I Learned
 

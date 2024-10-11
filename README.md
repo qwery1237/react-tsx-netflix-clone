@@ -50,7 +50,7 @@ During this project, I learned:
 ## Key Features
 
 - **Main Header**: Navigation between Home, Movie, and TV Show pages. On smaller screens, it switches to a dropdown menu.
-- **Search Bar Animation**: Clicking the search icon triggers an animation that reveals the search bar. It instantly requests new data as input changes, and redirects to the previous page if the input is cleared.
+- **Search Bar**: Clicking the search icon triggers an animation that reveals the search bar. It instantly requests new data as input changes, and redirects to the previous page if the input is cleared.
 - **Homepage**: Hovering over movie images enlarges them with additional information. An X-axis scroll animation for the slider is implemented, and clicking on a movie box leads to the detail page.
 - **Movie/TV Show Pages**: Includes a sub-header with dropdown genre navigation. Selecting a genre navigates to the appropriate page.
 - **Search Page**: A search page with a loader animation, infinite scroll for data requests, and a secondary loader when scrolling.

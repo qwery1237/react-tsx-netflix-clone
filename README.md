@@ -3,6 +3,7 @@
 Flix Spot is a Netflix clone app designed to replicate the UI and smooth animations of Netflix. This project allowed me to focus on TypeScript and animation techniques to create a seamless user experience.
 
 ## Table of Contents
+
 - [Motivation](#motivation)
 - [Challenges I Faced](#challenges-i-faced)
   - [Slider Animation](#slider-animation)
@@ -12,7 +13,8 @@ Flix Spot is a Netflix clone app designed to replicate the UI and smooth animati
 - [Tech Stack & Tools](#tech-stack--tools)
 - [Key Features](#key-features)
 - [Portfolio & GitHub Page](#portfolio--github-page)
-- 
+-
+
 ## Motivation
 
 I wanted to enhance my skills in TypeScript and animation, so I chose to build a Netflix clone. Netflix’s animations are smooth and visually appealing, and I wanted to challenge myself to implement similar animations in my project.
@@ -23,7 +25,7 @@ I wanted to enhance my skills in TypeScript and animation, so I chose to build a
 
 Implementing the slider animation was one of the most challenging parts of this project. The first version had too many bugs, so I had to rebuild it from scratch. I wanted to make it responsive, which meant dynamically adjusting the size of the video boxes based on the screen size and the number of boxes displayed per row. Calculating the correct position for the previous and next slides to ensure smooth transitions was particularly complex.
 
-To solve this, I managed the number of displayed videos in state and recalculated the box size on every screen resize. I subtracted the left and right padding and the gap between video boxes from the total screen width, then divided by the number of displayed boxes to determine the correct size. 
+To solve this, I managed the number of displayed videos in state and recalculated the box size on every screen resize. I subtracted the left and right padding and the gap between video boxes from the total screen width, then divided by the number of displayed boxes to determine the correct size.
 
 ### Modal for Video Details
 
@@ -38,6 +40,7 @@ Additionally, I prevented unnecessary scrolling outside of the required elements
 ## What I Learned
 
 During this project, I learned:
+
 - How to make efficient API calls using **React Query** for fetching external data.
 - Implementing complex animations with **Framer Motion**.
 - Deploying the project via **GitHub Pages**.

@@ -15,8 +15,7 @@ export interface ISearchResults {
   totalPages: number;
 }
 export interface ISearchResult {
-  id: number;
-  name: string;
+  media_type: string;
 }
 export interface IGenre {
   id: number;
@@ -359,8 +358,13 @@ export const getSearchResults = async ({
 // };
 export const getNextPage = async (keyword: string, pageIndex: number) => {
   const { data } = await axios.get(
-    `${API_BASE_URL}/search/keyword?query=${keyword}&page=${pageIndex}&api_key=${API_KEY}`
+    `${API_BASE_URL}/search/multi?query=${keyword}&include_adult=true&page=${pageIndex}&api_key=${API_KEY}`
   );
+  // const { data } = await axios.get(
+  //   `${API_BASE_URL}/search/keyword?query=${keyword}&page=${pageIndex}&api_key=${API_KEY}`
+  // );
+  console.log(data);
+
   const filteredVideos = await convertSearchData(data);
   return { videos: filteredVideos, totalPages: data.total_pages };
 };
@@ -385,29 +389,14 @@ export const getVideoById = async (id: number) => {
 export const convertSearchData = async (data: { results: ISearchResult[] }) => {
   const results: ISearchResult[] = data.results;
 
-  const videos = await Promise.all(
-    results
-      .map((result) => getVideoById(result.id))
-      .filter((video) => video !== undefined)
-  );
-
+  // const videos = await Promise.all(
+  //   results
+  //     .map((result) => getVideoById(result.id))
+  //     .filter((video) => video !== undefined)
+  // );
+  const videos = results.filter((result) => result.media_type !== 'person');
   const filteredVideos = filterVideos(
-    videos.filter((video) => video !== undefined)
+    videos as unknown as IMovie[] | ITVShow[]
   );
   return filteredVideos;
 };
-// export const getMoreSearchResults = async (
-//   keyword: string,
-//   startIndex: number,
-//   totalPages: number
-// ) => {
-//   let pageIndex = startIndex;
-//   let videos: VideoType = [];
-//   while (pageIndex <= totalPages && videos.length < 20) {
-//     const extra = await getNextPage(keyword, pageIndex);
-//     videos = [...videos, ...extra];
-//     pageIndex++;
-//   }
-
-//   return { newVideos: videos, nextPage: pageIndex };
-// };
